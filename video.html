@@ -26,6 +26,8 @@
         //     cv.width = w;
         //     cv.height = h;
         // }
+
+        //출처: https://shstation.tistory.com/43 
         var canvas = document.getElementById("cv1");
         var ctx = canvas.getContext("2d");
         var readout = document.getElementById('readout');
@@ -92,7 +94,23 @@
             updateReadout(loc.x, loc.y);
 
         };
+        //canvas 클릭시영상 일시정지,재생----------------------------------------
+        canvas.addEventListener('click', function (ev) {
+            var video = document.getElementById("vd1");
+            if (video.paused == true) {
+                // Play the video
+                video.play();
 
+                // Update the button text to 'Pause'
+                playButton.innerHTML = "Pause";
+            } else {
+                // Pause the video
+                video.pause();
+
+                // Update the button text to 'Play'
+                playButton.innerHTML = "Play ";
+            }
+        });
         //동영상 컨트롤---------------------------------------------------------
         window.onload = function () {
 
@@ -151,6 +169,7 @@
 
             // 재생바 클릭 후에 동영상 재생
             seekBar.addEventListener("mouseup", function () {
+                playButton.innerHTML = "Pause";
                 video.play();
             });
 
