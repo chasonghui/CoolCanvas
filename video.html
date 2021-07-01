@@ -1,0 +1,93 @@
+<head>
+    <link rel="stylesheet" href="video.css">
+</head>
+
+<body>
+    <div class="container">
+        <video id="vd1" width="500px" height="380px" controls autoPlay>
+            <source src="http://upload.wikimedia.org/wikipedia/commons/7/79/Big_Buck_Bunny_small.ogv">
+            <!-- onplay="resize_canvas(this)" -->
+        </video>
+        <canvas class="canvas" id="cv1" width="500px" height="380px"></canvas>
+        <!-- Video Controls -->
+        <div id="video-controls" style="margin-top: 30px;">
+            <button type="button" id="play-pause">재생</button>
+            <input type="range" id="seek-bar" value="0">
+        </div>
+    </div>
+
+    <script>
+        // // 캔버스 오버레이(영상 사이즈에)
+        // function resize_canvas(element) {
+        //     var w = element.offsetWidth;
+        //     var h = element.offsetHeight;
+        //     var cv = document.getElementById("cv1");
+        //     cv.width = w;
+        //     cv.height = h;
+        // }
+
+
+        window.onload = function () {
+
+            // Video
+            var video = document.getElementById("vd1");
+
+            // Buttons
+            var playButton = document.getElementById("play-pause");
+            var muteButton = document.getElementById("mute");
+            var fullScreenButton = document.getElementById("full-screen");
+
+            // Sliders
+            var seekBar = document.getElementById("seek-bar");
+            var volumeBar = document.getElementById("volume-bar");
+
+            // 재생/일시정지 기능
+            playButton.addEventListener("click", function () {
+                if (video.paused == true) {
+                    // Play the video
+                    video.play();
+
+                    // Update the button text to 'Pause'
+                    playButton.innerHTML = "Pause";
+                } else {
+                    // Pause the video
+                    video.pause();
+
+                    // Update the button text to 'Play'
+                    playButton.innerHTML = "Play ";
+                }
+            });
+
+            // 재생바가 있는 위치로 화면 이동
+            seekBar.addEventListener("change", function () {
+                // Calculate the new time
+                var time = video.duration * (seekBar.value / 100);
+
+                // Update the video time
+                video.currentTime = time;
+            });
+
+
+            // 재생시간에 따른 재생바 이동
+            video.addEventListener("timeupdate", function () {
+                // Calculate the slider value
+                var value = (100 / video.duration) * video.currentTime;
+
+                // Update the slider value
+                seekBar.value = value;
+            });
+
+            // 재생바 드래그하려고 클릭시에 동영상 정지
+            seekBar.addEventListener("mousedown", function () {
+                video.pause();
+            });
+
+            // 재생바 클릭 후에 동영상 재생
+            seekBar.addEventListener("mouseup", function () {
+                video.play();
+            });
+
+
+        }
+    </script>
+</body>
