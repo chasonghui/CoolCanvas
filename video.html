@@ -4,7 +4,7 @@
 
 <body>
     <div class="container">
-        <video id="vd1" width="500px" height="380px" controls autoPlay>
+        <video id="vd1" width="500px" height="500px" controls autoPlay>
             <source src="http://upload.wikimedia.org/wikipedia/commons/7/79/Big_Buck_Bunny_small.ogv">
             <!-- onplay="resize_canvas(this)" -->
         </video>
@@ -12,7 +12,7 @@
         <canvas class="canvas" id="cv1" width="500px" height="380px"></canvas>
         <!-- Video Controls -->
         <div id="video-controls" style="margin-top: 30px;">
-            <button type="button" id="play-pause">재생</button>
+            <button type="button" id="play-pause">Pause</button>
             <input type="range" id="seek-bar" value="0">
         </div>
     </div>
@@ -97,6 +97,8 @@
         //canvas 클릭시영상 일시정지,재생----------------------------------------
         canvas.addEventListener('click', function (ev) {
             var video = document.getElementById("vd1");
+            // Buttons
+            var playButton = document.getElementById("play-pause");
             if (video.paused == true) {
                 // Play the video
                 video.play();
@@ -117,10 +119,7 @@
             // Video
             var video = document.getElementById("vd1");
 
-            // Buttons
-            var playButton = document.getElementById("play-pause");
-            var muteButton = document.getElementById("mute");
-            var fullScreenButton = document.getElementById("full-screen");
+
 
             // Sliders
             var seekBar = document.getElementById("seek-bar");
