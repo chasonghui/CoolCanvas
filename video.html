@@ -4,7 +4,7 @@
 
 <body>
     <div class="container">
-        <video class="video" id="vd1" controls autoPlay src="60.mp4" onplay="resize_canvas(this)"></video>
+        <video class="video" id="vd1" controls autoPlay loop src="60.mp4" onplay="resize_canvas(this)"></video>
         <div id="readout"></div>
         <canvas class="canvas" id="cv1"></canvas>
         <!-- Video Controls -->
@@ -91,6 +91,7 @@
         //clear버튼
         function clear_click() {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
+            coords = [];
         }
         //파란선---------------------------------------------------------------
         function drawHorizontalLine(y) { //마우스 있는 곳에 가로 선 그리기(파랑)
