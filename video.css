@@ -16,5 +16,12 @@
     top: 0;
     left: 0;
     z-index: 10;
-    background-color:rgba(70, 40, 151, 0.5);
+    /* background-color:rgba(70, 40, 151, 0.5); */
+  }
+  .video-controls{
+    position: absolute;
+  }
+
+  #readout{
+    position: absolute;
   }

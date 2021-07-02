@@ -4,35 +4,42 @@
 
 <body>
     <div class="container">
-        <video id="vd1" width="500px" height="500px" controls autoPlay>
-            <source src="http://upload.wikimedia.org/wikipedia/commons/7/79/Big_Buck_Bunny_small.ogv">
-            <!-- onplay="resize_canvas(this)" -->
-        </video>
+        <video class="video" id="vd1" controls autoPlay src="60.mp4" onplay="resize_canvas(this)"></video>
         <div id="readout"></div>
-        <canvas class="canvas" id="cv1" width="500px" height="500px"></canvas>
+        <canvas class="canvas" id="cv1"></canvas>
         <!-- Video Controls -->
-        <div id="video-controls" style="margin-top: 30px;">
-            <button type="button" id="play-pause">Pause</button>
+        <div id="vcontrols" class="video-controls">
+            <!-- <button type="button" id="play-pause">Pause</button> -->
             <input type="range" id="seek-bar" value="0">
         </div>
     </div>
 
     <script>
-        // // 캔버스 오버레이(영상 사이즈에 맞게)
-        // function resize_canvas(element) {
-        //     var w = element.offsetWidth;
-        //     var h = element.offsetHeight;
-        //     var cv = document.getElementById("cv1");
-        //     cv.width = w;
-        //     cv.height = h;
-        // }
-
-        //출처: https://shstation.tistory.com/43 
         var canvas = document.getElementById("cv1");
+        var video = document.getElementById("vd1");
         var ctx = canvas.getContext("2d");
         var readout = document.getElementById('readout');
+        var vcontrols = document.getElementById("vcontrols");
+        var seekBar = document.getElementById("seek-bar");
+        //비디오 크기
+        var w = video.offsetWidth;
+        var h = video.offsetHeight;
+        //좌표, 재생바 위치,크기->canvas크기에 따라 변하게
+        //console.log(h);
+        vcontrols.style.marginTop = h + 100;
+        readout.style.marginTop = h + 150;
+        seekBar.style.width = w;
 
-        //캔버스 좌표----------------------------------------------------------
+        // 캔버스 오버레이(vedio 사이즈에 맞게)
+        function resize_canvas(element) {
+            var w = element.offsetWidth;
+            var h = element.offsetHeight;
+            var cv = document.getElementById("cv1");
+            cv.width = w;
+            cv.height = h;
+        }
+
+        //캔버스 좌표->수학좌표계로 변경----------------------------------------------------
         function windowToCanvas(canvas, x, y) {
             var bbox = canvas.getBoundingClientRect(); //viewport 기준으로 나의 위치 알려줌
             return {
@@ -40,6 +47,8 @@
                 y: -(y - bbox.top * (canvas.height / bbox.height) - 500)//y좌표수정
             };
         }
+
+
 
         //바탕 회색줄-----------------------------------------------------------
         function drawBackground() { //바탕에 회색 줄 그리기
@@ -114,7 +123,10 @@
             }
         });
         //클릭하면 X표시
-
+        function draw() {
+            ctx.fillStyle = "red";
+            ctx.fillText('x', 20, 20);
+        }
 
 
         //동영상 컨트롤---------------------------------------------------------
@@ -126,25 +138,25 @@
 
             var playButton = document.getElementById("play-pause");
             // Sliders
-            var seekBar = document.getElementById("seek-bar");
+
             var volumeBar = document.getElementById("volume-bar");
 
-            // 재생/일시정지 기능
-            playButton.addEventListener("click", function () {
-                if (video.paused == true) {
-                    // Play the video
-                    video.play();
+            // // 재생/일시정지 기능
+            // playButton.addEventListener("click", function () {
+            //     if (video.paused == true) {
+            //         // Play the video
+            //         video.play();
 
-                    // Update the button text to 'Pause'
-                    playButton.innerHTML = "Pause";
-                } else {
-                    // Pause the video
-                    video.pause();
+            //         // Update the button text to 'Pause'
+            //         playButton.innerHTML = "Pause";
+            //     } else {
+            //         // Pause the video
+            //         video.pause();
 
-                    // Update the button text to 'Play'
-                    playButton.innerHTML = "Play ";
-                }
-            });
+            //         // Update the button text to 'Play'
+            //         playButton.innerHTML = "Play ";
+            //     }
+            // });
 
             // 재생바가 있는 위치로 화면 이동
             seekBar.addEventListener("change", function () {
@@ -169,13 +181,6 @@
             seekBar.addEventListener("mousedown", function () {
                 video.pause();
             });
-
-            // 재생바 클릭 후에 동영상 재생
-            seekBar.addEventListener("mouseup", function () {
-                playButton.innerHTML = "Pause";
-                video.play();
-            });
-
 
         }
     </script>
