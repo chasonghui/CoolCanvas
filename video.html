@@ -4,7 +4,7 @@
 
 <body>
     <div class="container">
-        <video class="video" id="vd1" controls autoPlay loop src="60.mp4" onplay="resize_canvas(this)"></video>
+        <video class="video" id="vd1" controls autoPlay loop src="30도.mp4" onplay="resize_canvas(this)"></video>
         <div id="readout"></div>
         <canvas class="canvas" id="cv1"></canvas>
         <!-- Video Controls -->
@@ -12,10 +12,30 @@
             <button type="button" id="play-pause">Pause</button>
             <input type="range" id="seek-bar" value="0">
             <button id="clear" onclick="clear_click();">clear</button>
+            <button id="save" onclick="save_click();">Save</button>
         </div>
+        <div id="example"></div>
     </div>
 
     <script>
+        var data = [
+            ['', 'Ford', 'Tesla', 'Toyota', 'Honda'],
+            ['2017', 10, 11, 12, 13],
+            ['2018', 20, 11, 14, 13],
+            ['2019', 30, 15, 12, 13]
+        ];
+
+        var container = document.getElementById('example');
+        var hot = new Handsontable(container, {
+            data: data,
+            rowHeaders: true,
+            colHeaders: true,
+            filters: true,
+            dropdownMenu: true
+        });
+
+
+
         var canvas = document.getElementById("cv1");
         var video = document.getElementById("vd1");
         var ctx = canvas.getContext("2d");
@@ -93,6 +113,14 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height)
             coords = [];
         }
+
+        //Save버튼
+        function save_click() {
+            var save_coords = [];
+            save_coords = coords;
+
+        }
+
         //파란선---------------------------------------------------------------
         function drawHorizontalLine(y) { //마우스 있는 곳에 가로 선 그리기(파랑)
             ctx.beginPath();
@@ -168,7 +196,7 @@
                 if (video.paused == true) {
                     // Play the video
                     video.play();
-
+                    coords = [];
                     // Update the button text to 'Pause'
                     playButton.innerHTML = "Pause";
                 } else {
@@ -176,7 +204,7 @@
                     video.pause();
 
                     // Update the button text to 'Play'
-                    playButton.innerHTML = "Play ";
+                    playButton.innerHTML = "Play and Clear";
                 }
             });
 
