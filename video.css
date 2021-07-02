@@ -25,3 +25,8 @@
   #readout{
     position: absolute;
   }
+
+  #table{
+    position:fixed;
+    margin-top: 1050px;
+  }
