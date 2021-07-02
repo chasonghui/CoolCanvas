@@ -24,8 +24,14 @@
         //비디오 크기
         var w = video.offsetWidth;
         var h = video.offsetHeight;
-        //좌표, 재생바 위치,크기->canvas크기에 따라 변하게
-        //console.log(h);
+
+        //canvas 원점 변환
+        ctx.translate(0, -h);
+
+        //클릭시 Canvas좌표 저장할 배열
+        var coords = [];
+
+
         vcontrols.style.marginTop = h + 100;
         readout.style.marginTop = h + 150;
         seekBar.style.width = w;
@@ -39,12 +45,12 @@
             cv.height = h;
         }
 
-        //캔버스 좌표->수학좌표계로 변경----------------------------------------------------
+        //캔버스 좌표--------------------------------------------------
         function windowToCanvas(canvas, x, y) {
             var bbox = canvas.getBoundingClientRect(); //viewport 기준으로 나의 위치 알려줌
             return {
                 x: x - bbox.left * (canvas.width / bbox.width),
-                y: -(y - bbox.top * (canvas.height / bbox.height) - 500)//y좌표수정
+                y: y - bbox.top * (canvas.height / bbox.height)//y좌표수정
             };
         }
 
@@ -75,8 +81,10 @@
             drawHorizontalLine(y);
         }
 
+        //mouseon위치의 좌표 출력 
         function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
             readout.innerText = '(' + x.toFixed(0) + ',' + y.toFixed(0) + ')';
+            console.log(x, y);
         }
 
         //파란선---------------------------------------------------------------
@@ -94,39 +102,45 @@
             ctx.stroke();
         }
 
-        //함수실행(마우스가 canvas위에 있을때만)-----------------------------------------
+        //canvas 좌표 값 -----------------------------------------
         canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함수 실행
 
             var loc = windowToCanvas(canvas, e.clientX, e.clientY);
             //e.clientX: 마우스의 x좌표값, e.clicentY: 마우스 y좌표값
             // drawBackground();
-            drawGuidelines(loc.x, -(loc.y - 500));//y좌표수정
+            drawGuidelines(loc.x, loc.y);
             updateReadout(loc.x, loc.y);
-
         };
-        //canvas 클릭시영상 일시정지,재생----------------------------------------
+
+        //canvas 좌표 저장(클릭시)
+
+        function storeCoordinate(x, y, array) {
+            array.push(x);
+            array.push(y);
+        }
+
+        //canvas 클릭시 영상 일시정지,재생, 좌표저장----------------------------------------
         canvas.addEventListener('click', function (ev) {
             var video = document.getElementById("vd1");
+            var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
+            storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
+            console.log(coords);//배열 출력 
             // Buttons
             var playButton = document.getElementById("play-pause");
             if (video.paused == true) {
                 // Play the video
                 video.play();
                 // Update the button text to 'Pause'
-                playButton.innerHTML = "Pause";
+                //playButton.innerHTML = "Pause";
             } else {
                 // Pause the video
                 video.pause();
 
                 // Update the button text to 'Play'
-                playButton.innerHTML = "Play ";
+                // playButton.innerHTML = "Play ";
             }
         });
-        //클릭하면 X표시
-        function draw() {
-            ctx.fillStyle = "red";
-            ctx.fillText('x', 20, 20);
-        }
+
 
 
         //동영상 컨트롤---------------------------------------------------------
