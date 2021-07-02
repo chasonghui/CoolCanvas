@@ -9,8 +9,9 @@
         <canvas class="canvas" id="cv1"></canvas>
         <!-- Video Controls -->
         <div id="vcontrols" class="video-controls">
-            <!-- <button type="button" id="play-pause">Pause</button> -->
+            <button type="button" id="play-pause">Pause</button>
             <input type="range" id="seek-bar" value="0">
+            <button id="clear" onclick="clear_click();">clear</button>
         </div>
     </div>
 
@@ -33,7 +34,7 @@
 
 
         vcontrols.style.marginTop = h + 100;
-        readout.style.marginTop = h + 150;
+        readout.style.marginTop = h + 200;
         seekBar.style.width = w;
 
         // 캔버스 오버레이(vedio 사이즈에 맞게)
@@ -87,6 +88,10 @@
             console.log(x, y);
         }
 
+        //clear버튼
+        function clear_click() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+        }
         //파란선---------------------------------------------------------------
         function drawHorizontalLine(y) { //마우스 있는 곳에 가로 선 그리기(파랑)
             ctx.beginPath();
@@ -108,7 +113,7 @@
             var loc = windowToCanvas(canvas, e.clientX, e.clientY);
             //e.clientX: 마우스의 x좌표값, e.clicentY: 마우스 y좌표값
             // drawBackground();
-            drawGuidelines(loc.x, loc.y);
+            //drawGuidelines(loc.x, loc.y);
             updateReadout(loc.x, loc.y);
         };
 
@@ -124,17 +129,19 @@
             var video = document.getElementById("vd1");
             var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
             storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
+            ctx.font = 'italic 40px Calibri';
+            ctx.fillText('x', loc.x, loc.y);
             console.log(coords);//배열 출력 
             // Buttons
             var playButton = document.getElementById("play-pause");
             if (video.paused == true) {
                 // Play the video
-                video.play();
+                //video.play();
                 // Update the button text to 'Pause'
                 //playButton.innerHTML = "Pause";
             } else {
                 // Pause the video
-                video.pause();
+                //video.pause();
 
                 // Update the button text to 'Play'
                 // playButton.innerHTML = "Play ";
@@ -155,22 +162,22 @@
 
             var volumeBar = document.getElementById("volume-bar");
 
-            // // 재생/일시정지 기능
-            // playButton.addEventListener("click", function () {
-            //     if (video.paused == true) {
-            //         // Play the video
-            //         video.play();
+            // 재생/일시정지 기능
+            playButton.addEventListener("click", function () {
+                if (video.paused == true) {
+                    // Play the video
+                    video.play();
 
-            //         // Update the button text to 'Pause'
-            //         playButton.innerHTML = "Pause";
-            //     } else {
-            //         // Pause the video
-            //         video.pause();
+                    // Update the button text to 'Pause'
+                    playButton.innerHTML = "Pause";
+                } else {
+                    // Pause the video
+                    video.pause();
 
-            //         // Update the button text to 'Play'
-            //         playButton.innerHTML = "Play ";
-            //     }
-            // });
+                    // Update the button text to 'Play'
+                    playButton.innerHTML = "Play ";
+                }
+            });
 
             // 재생바가 있는 위치로 화면 이동
             seekBar.addEventListener("change", function () {
