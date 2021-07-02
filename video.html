@@ -9,7 +9,7 @@
             <!-- onplay="resize_canvas(this)" -->
         </video>
         <div id="readout"></div>
-        <canvas class="canvas" id="cv1" width="500px" height="380px"></canvas>
+        <canvas class="canvas" id="cv1" width="500px" height="500px"></canvas>
         <!-- Video Controls -->
         <div id="video-controls" style="margin-top: 30px;">
             <button type="button" id="play-pause">Pause</button>
@@ -37,7 +37,7 @@
             var bbox = canvas.getBoundingClientRect(); //viewport 기준으로 나의 위치 알려줌
             return {
                 x: x - bbox.left * (canvas.width / bbox.width),
-                y: y - bbox.top * (canvas.height / bbox.height)
+                y: -(y - bbox.top * (canvas.height / bbox.height) - 500)//y좌표수정
             };
         }
 
@@ -59,6 +59,7 @@
 
         //가이드라인-----------------------------------------------------------
         function drawGuidelines(x, y) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);//초기화 
             ctx.strokeStyle = 'rgba(0, 0, 230, 0.8)';
             ctx.lineWidth = 0.5;
             drawVerticalLine(x);
@@ -89,8 +90,8 @@
 
             var loc = windowToCanvas(canvas, e.clientX, e.clientY);
             //e.clientX: 마우스의 x좌표값, e.clicentY: 마우스 y좌표값
-            drawBackground();
-            drawGuidelines(loc.x, loc.y);
+            // drawBackground();
+            drawGuidelines(loc.x, -(loc.y - 500));//y좌표수정
             updateReadout(loc.x, loc.y);
 
         };
@@ -102,7 +103,6 @@
             if (video.paused == true) {
                 // Play the video
                 video.play();
-
                 // Update the button text to 'Pause'
                 playButton.innerHTML = "Pause";
             } else {
@@ -113,6 +113,10 @@
                 playButton.innerHTML = "Play ";
             }
         });
+        //클릭하면 X표시
+
+
+
         //동영상 컨트롤---------------------------------------------------------
         window.onload = function () {
 
@@ -120,7 +124,7 @@
             var video = document.getElementById("vd1");
 
 
-
+            var playButton = document.getElementById("play-pause");
             // Sliders
             var seekBar = document.getElementById("seek-bar");
             var volumeBar = document.getElementById("volume-bar");
