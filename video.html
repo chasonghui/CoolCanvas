@@ -3,6 +3,7 @@
     <script src="https://cdn.jsdelivr.net/npm/handsontable@9.0.1/dist/handsontable.full.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/handsontable@9.0.1/dist/handsontable.full.min.css" rel="stylesheet"
         media="screen">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 
 <body>
@@ -16,12 +17,16 @@
             <input type="range" id="seek-bar" value="0">
             <button id="clear" onclick="clear_click();">clear</button>
             <button id="save" onclick="save_click();">Save</button>
+            <button id="remove" onclick="remove_div(this)">Remove</button>
         </div>
     </div>
-    <div id="table"></div>
+    <div id="handson">
+        <!--여기에 표 동적 생성-->
+
+    </div>
+
 
     <script>
-
         var canvas = document.getElementById("cv1");
         var video = document.getElementById("vd1");
         var ctx = canvas.getContext("2d");
@@ -39,7 +44,8 @@
         var xcoords = [];
         var ycoords = [];
         var save_coords = [];
-
+        var time = [];
+        var save_time = 0;//클릭시 동영상의 시간
 
         vcontrols.style.marginTop = h + 100;
         readout.style.marginTop = h + 200;
@@ -63,24 +69,6 @@
             };
         }
 
-
-
-        //바탕 회색줄-----------------------------------------------------------
-        function drawBackground() { //바탕에 회색 줄 그리기
-            var VERTICAL_LINE_SPACING = 12; //줄 간격
-            var i = ctx.canvas.height;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = "lightgray";
-            ctx.lineWidth = 0.5;
-            while (i > VERTICAL_LINE_SPACING * 4) {
-                ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(ctx.canvas.width, i);
-                ctx.stroke();
-                i -= VERTICAL_LINE_SPACING;
-            }
-        }
-
         //가이드라인-----------------------------------------------------------
         function drawGuidelines(x, y) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);//초기화 
@@ -89,45 +77,69 @@
             drawVerticalLine(x);
             drawHorizontalLine(y);
         }
+        //가이드라인의 가로선---------------------------------------------------------------
+        function drawHorizontalLine(y) { //마우스 있는 곳에 가로 선 그리기(파랑)
+            ctx.beginPath();
+            ctx.moveTo(0, y + 0.5);
+            ctx.lineTo(ctx.canvas.width, y + 0.5);
+            ctx.stroke();
+        }
+        //가이드라인의 세로선---------------------------------------------------------------
+        function drawVerticalLine(x) {
+            ctx.beginPath();
+            ctx.moveTo(x + 0.5, 0);
+            ctx.lineTo(x + 0.5, ctx.canvas.height);
+            ctx.stroke();
+        }
 
-        //mouseon위치의 좌표 출력 
+        //좌표 update(innerText)
         function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
             readout.innerText = '(' + x.toFixed(0) + ',' + -(y - h).toFixed(0) + ')';
         }
 
 
-        //handsontable삭제 
-
-        //clear버튼
+        //clear버튼 : 캔버스 초기화 
         function clear_click() {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
             coords = [];
             save_coords = [];
             xcoords = [];
             ycoords = [];
+            time = [];
+            var handson = document.getElementById("hot-display-license-info");
+            handson.parentNode.removeChild(handson);
 
         }
 
-
-        //handsontable
+        //테이블 생성: handsontable 생성(동적)
         function draw_table() {
-
+            var tb1 = document.createElement("div");
+            var element = document.getElementById("handson");
+            tb1.id = "table";
+            element.appendChild(tb1);
             var data = [
                 xcoords,
-                ycoords
+                ycoords,
+                time
             ];
             var container = document.getElementById('table');
             var hot = new Handsontable(container, {
                 data: data,
-                rowHeaders: ['x', 'y'],
+                rowHeaders: ['x', 'y', 'time'],
                 contextMenu: true
             });
+        }
+
+        //remove 버튼 : id가 table인 div 삭제 
+        function remove_div() {
+            var child = document.getElementById("table");
+            child.parentNode.removeChild(child);
+            clear_click();
 
         }
 
-        //Save버튼
+        //Save 버튼 : 클릭한곳의 좌표 배열에 저장
         function save_click() {
-
             save_coords = coords;//save버튼 클릭 후 바로 저장
             for (var i = 0; i < save_coords.length; i++) {
                 if (i % 2 == 0 || i == 0)//0이거나 짝수일때 x
@@ -142,27 +154,12 @@
                 }
             }
             console.log("save : " + save_coords);
-            var newDiv = document.createElement("div");
+            //   var newDiv = document.createElement("div");
             draw_table();
-
+            clear_click();
         }
 
-        //파란선---------------------------------------------------------------
-        function drawHorizontalLine(y) { //마우스 있는 곳에 가로 선 그리기(파랑)
-            ctx.beginPath();
-            ctx.moveTo(0, y + 0.5);
-            ctx.lineTo(ctx.canvas.width, y + 0.5);
-            ctx.stroke();
-        }
-        //세로선---------------------------------------------------------------
-        function drawVerticalLine(x) {
-            ctx.beginPath();
-            ctx.moveTo(x + 0.5, 0);
-            ctx.lineTo(x + 0.5, ctx.canvas.height);
-            ctx.stroke();
-        }
-
-        //canvas 좌표 값 -----------------------------------------
+        //onmouse : 마우스가 canvas위에 있을 때
         canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함수 실행
 
             var loc = windowToCanvas(canvas, e.clientX, e.clientY);
@@ -172,90 +169,118 @@
             updateReadout(loc.x, loc.y);
         };
 
-        //canvas 좌표 저장(클릭시)
-
+        //배열에 좌표저장(x,y값 저장)
         function storeCoordinate(x, y, array) {
             array.push(x);
             array.push(y);
         }
 
+        //캔버스를 비디오 뒤로
+        function Canvasoff() {
+            document.getElementById("vd1").style.zIndex = -1;
+            document.getElementById("cv1").style.zIndex = 1000;
+        }
+
+        //캔버스를 비디오 위로
+        function Canvason() {
+            document.getElementById("vd1").style.zIndex = 1000;
+            document.getElementById("cv1").style.zIndex = -1;
+        }
+
+        //findindex에 사용할 callback함수
+
         //canvas 클릭시좌표저장----------------------------------------
         canvas.addEventListener('click', function (ev) {
+            console.log("이벤트 시작");
+            //var t1 = video.duration * (seekBar.value / 100)
             var video = document.getElementById("vd1");
             var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
-            storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
-            ctx.font = 'italic 40px Calibri';
-            ctx.fillText('x', loc.x, loc.y);
-            console.log(coords);//배열 출력 
-            // Buttons
-            var playButton = document.getElementById("play-pause");
-            if (video.paused == true) {
-                // Play the video
-                //video.play();
-                // Update the button text to 'Pause'
-                //playButton.innerHTML = "Pause";
-            } else {
-                // Pause the video
-                //video.pause();
+            var find = 0;
 
-                // Update the button text to 'Play'
-                // playButton.innerHTML = "Play ";
+            ctx.font = 'italic 40px Calibri';
+            save_time = video.currentTime;//클릭시 시간
+
+            //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함.------------------------------
+            function findtime(element) {
+                if (element === save_time) return true;
             }
+
+            find = time.findIndex(findtime);
+
+
+            console.log("time 배열 : " + time);
+            if (video.paused === true) {
+                if ((find === -1)) {
+                    console.log("시간 오직하나")
+                    ctx.fillText('x', loc.x, loc.y);//멈춤상태일때 x표시 찍기 
+                    storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
+                    console.log("find값 : " + find);
+                    console.log(coords);
+                    time.push(save_time);
+                }
+                else {
+                    console.log("시간이 중복되었어요 ;")
+                    Canvasoff();
+                }
+            } else {
+                Canvasoff();
+            }
+            console.log("이벤트 끝 다시 클릭해봐 ");
+            //-----------------------------------------------------------------------------------------------
         });
 
-
+        video.addEventListener('click', function (ev) {
+            var video = document.getElementById("vd1");
+            var playButton = document.getElementById("play-pause");
+            if (video.paused == true) {
+                Canvason();
+                console.log("click able");
+            }
+            else {
+                Canvason();
+            }
+        });
 
         //동영상 컨트롤---------------------------------------------------------
         window.onload = function () {
 
             // Video
             var video = document.getElementById("vd1");
-
-
             var playButton = document.getElementById("play-pause");
             // Sliders
-
             var volumeBar = document.getElementById("volume-bar");
-
             // 재생/일시정지 기능
             playButton.addEventListener("click", function () {
                 if (video.paused == true) {
-                    // Play the video
                     video.play();
                     coords = [];
-                    // Update the button text to 'Pause'
+                    Canvason();
                     playButton.innerHTML = "Pause";
                 } else {
-                    // Pause the video
                     video.pause();
-
-                    // Update the button text to 'Play'
+                    Canvasoff();
                     playButton.innerHTML = "Play and Clear";
                 }
             });
 
-            // 재생바가 있는 위치로 화면 이동
             seekBar.addEventListener("change", function () {
-                // Calculate the new time
                 var time = video.duration * (seekBar.value / 100);
-
-                // Update the video time
                 video.currentTime = time;
             });
-
 
             // 재생시간에 따른 재생바 이동
             video.addEventListener("timeupdate", function () {
                 // Calculate the slider value
                 var value = (100 / video.duration) * video.currentTime;
-
                 // Update the slider value
                 seekBar.value = value;
             });
 
             // 재생바 드래그하려고 클릭시에 동영상 정지
             seekBar.addEventListener("mousedown", function () {
+                Canvasoff();
                 video.pause();
+
             });
         }
     </script>
