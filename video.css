@@ -19,11 +19,28 @@
     background-color:rgba(70, 40, 151, 0.5);
   }
   .video-controls{
-    position: absolute;
+    position: fixed;
+    width: 50vh;
+    height: 10vh;
+  }
+  button{
+    font-size: 20px;
+    padding:5px;
+    border-radius: 5px;
+  }
+  button:hover{
+    background:rebeccapurple;
+    border-color: whitesmoke;
+    color:white;
+    border-radius: 5px;
+  }
+
+  input[type=range]{
+    color: rebeccapurple;
   }
 
   #readout{
-    position: absolute;
+    position: fixed;
   }
 
   #table{

@@ -22,9 +22,7 @@
     </div>
     <div id="handson">
         <!--여기에 표 동적 생성-->
-
     </div>
-
 
     <script>
         var canvas = document.getElementById("cv1");
@@ -69,34 +67,33 @@
             };
         }
 
-        //가이드라인-----------------------------------------------------------
-        function drawGuidelines(x, y) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);//초기화 
-            ctx.strokeStyle = 'rgba(0, 0, 230, 0.8)';
-            ctx.lineWidth = 0.5;
-            drawVerticalLine(x);
-            drawHorizontalLine(y);
-        }
-        //가이드라인의 가로선---------------------------------------------------------------
-        function drawHorizontalLine(y) { //마우스 있는 곳에 가로 선 그리기(파랑)
-            ctx.beginPath();
-            ctx.moveTo(0, y + 0.5);
-            ctx.lineTo(ctx.canvas.width, y + 0.5);
-            ctx.stroke();
-        }
-        //가이드라인의 세로선---------------------------------------------------------------
-        function drawVerticalLine(x) {
-            ctx.beginPath();
-            ctx.moveTo(x + 0.5, 0);
-            ctx.lineTo(x + 0.5, ctx.canvas.height);
-            ctx.stroke();
-        }
+        // //가이드라인-----------------------------------------------------------
+        // function drawGuidelines(x, y) {
+        // ctx.clearRect(0, 0, canvas.width, canvas.height);//초기화 
+        //     ctx.strokeStyle = 'rgba(0, 0, 230, 0.8)';
+        //     ctx.lineWidth = 0.5;
+        //     drawVerticalLine(x);
+        //     drawHorizontalLine(y);
+        // }
+        // //가이드라인의 가로선---------------------------------------------------------------
+        // function drawHorizontalLine(y) { //마우스 있는 곳에 가로 선 그리기(파랑)
+        //     ctx.beginPath();
+        //     ctx.moveTo(0, y + 0.5);
+        //     ctx.lineTo(ctx.canvas.width, y + 0.5);
+        //     ctx.stroke();
+        // }
+        // //가이드라인의 세로선---------------------------------------------------------------
+        // function drawVerticalLine(x) {
+        //     ctx.beginPath();
+        //     ctx.moveTo(x + 0.5, 0);
+        //     ctx.lineTo(x + 0.5, ctx.canvas.height);
+        //     ctx.stroke();
+        // }
 
         //좌표 update(innerText)
         function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
-            readout.innerText = '(' + x.toFixed(0) + ',' + -(y - h).toFixed(0) + ')';
+            readout.innerText = '좌표 : (' + x.toFixed(0) + ',' + -(y - h).toFixed(0) + ')';
         }
-
 
         //clear버튼 : 캔버스 초기화 
         function clear_click() {
@@ -197,7 +194,8 @@
             var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
             var find = 0;
 
-            ctx.font = 'italic 40px Calibri';
+            ctx.font = '40px Calibri';
+            ctx.fillStyle = "red";
             save_time = video.currentTime;//클릭시 시간
 
             //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함.------------------------------
@@ -212,7 +210,7 @@
             if (video.paused === true) {
                 if ((find === -1)) {
                     console.log("시간 오직하나")
-                    ctx.fillText('x', loc.x, loc.y);//멈춤상태일때 x표시 찍기 
+                    ctx.fillText('⼗', loc.x, loc.y);//멈춤상태일때 x표시 찍기 
                     storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
                     console.log("find값 : " + find);
                     console.log(coords);
