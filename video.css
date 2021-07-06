@@ -13,25 +13,22 @@
     top: 0;
     left: 0;
     z-index: 10;
-    background-color:rgba(70, 40, 151, 0.2);
+    /* background-color:rgba(70, 40, 151, 0.2); */
   }
   .video-controls{
     position: absolute;
+    height: auto;
   }
   button{
     font-size: 20px;
     padding:5px;
     border-radius: 5px;
+    margin: 3px;
   }
   button:hover{
     background:rebeccapurple;
-    border-color: whitesmoke;
     color:white;
     border-radius: 5px;
-  }
-
-  input[type=range]{
-    color: rebeccapurple;
   }
 
   #readout{
@@ -40,5 +37,5 @@
 
   #table{
     position:fixed;
-    margin-top: 1000px;
+    margin-top: 1020px;
   }
