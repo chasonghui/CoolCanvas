@@ -15,7 +15,9 @@
         <div id="vcontrols" class="video-controls">
             <button type="button" id="Replay" onclick="replay();">Replay Video</button>
             <button type="button" id="analysis">Analysis Mode</button>
+            <br>
             <input type="range" id="seek-bar" value="0">
+            <br>
             <button id="clear" onclick="clear_click();">Clear ' + '</button>
             <button id="save" onclick="save_click();">Save as Table</button>
             <button id="remove" onclick="remove_div(this)">Remove Tables</button>
@@ -48,8 +50,8 @@
         var time = [];
         var save_time = 0;//클릭시 동영상의 시간
 
-        vcontrols.style.marginTop = h + 100;
-        readout.style.marginTop = h + 200;
+        vcontrols.style.marginTop = h + 50;
+        readout.style.marginTop = h + 100;
         seekBar.style.width = w;
 
         // 캔버스 오버레이(vedio 사이즈에 맞게)
@@ -59,6 +61,9 @@
             var cv = document.getElementById("cv1");
             cv.width = w;
             cv.height = h;
+            vcontrols.style.marginTop = h + 50;
+            readout.style.marginTop = h + 100;
+            seekBar.style.width = w;
         }
 
         //캔버스 좌표--------------------------------------------------
@@ -88,6 +93,7 @@
             video.play();
             Analysis_Button.innerHTML = "Analysis Mode";
             Analysis_Button.disabled = false;
+            resize_canvas();
         }
 
         //좌표 update(innerText)
