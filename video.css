@@ -16,12 +16,10 @@
     top: 0;
     left: 0;
     z-index: 10;
-    background-color:rgba(70, 40, 151, 0.5);
+    background-color:rgba(70, 40, 151, 0.2);
   }
   .video-controls{
-    position: fixed;
-    width: 50vh;
-    height: 10vh;
+    position: absolute;
   }
   button{
     font-size: 20px;
@@ -45,5 +43,5 @@
 
   #table{
     position:fixed;
-    margin-top: 1050px;
+    margin-top: 900px;
   }

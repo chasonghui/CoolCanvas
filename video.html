@@ -8,16 +8,17 @@
 
 <body>
     <div class="container">
-        <video class="video" id="vd1" controls src="30도.mp4" onplay="resize_canvas(this)"></video>
+        <video class="video" id="vd1" controls src="30도.mp4"></video>
         <div id="readout"></div>
         <canvas class="canvas" id="cv1"></canvas>
         <!-- Video Controls -->
         <div id="vcontrols" class="video-controls">
-            <button type="button" id="play-pause">Play</button>
+            <button type="button" id="Replay" onclick="replay();">Replay Video</button>
+            <button type="button" id="analysis">Analysis Mode</button>
             <input type="range" id="seek-bar" value="0">
-            <button id="clear" onclick="clear_click();">clear</button>
-            <button id="save" onclick="save_click();">Save</button>
-            <button id="remove" onclick="remove_div(this)">Remove</button>
+            <button id="clear" onclick="clear_click();">Clear ' + '</button>
+            <button id="save" onclick="save_click();">Save as Table</button>
+            <button id="remove" onclick="remove_div(this)">Remove Tables</button>
         </div>
     </div>
     <div id="handson">
@@ -31,6 +32,8 @@
         var readout = document.getElementById('readout');
         var vcontrols = document.getElementById("vcontrols");
         var seekBar = document.getElementById("seek-bar");
+        var Replay = document.getElementById("Replay");
+        var Analysis_Button = document.getElementById("analysis");
         //비디오 크기
         var w = video.offsetWidth;
         var h = video.offsetHeight;
@@ -50,9 +53,9 @@
         seekBar.style.width = w;
 
         // 캔버스 오버레이(vedio 사이즈에 맞게)
-        function resize_canvas(element) {
-            var w = element.offsetWidth;
-            var h = element.offsetHeight;
+        function resize_canvas() {
+            var w = video.offsetWidth;
+            var h = video.offsetHeight;
             var cv = document.getElementById("cv1");
             cv.width = w;
             cv.height = h;
@@ -67,28 +70,25 @@
             };
         }
 
-        // //가이드라인-----------------------------------------------------------
-        // function drawGuidelines(x, y) {
-        // ctx.clearRect(0, 0, canvas.width, canvas.height);//초기화 
-        //     ctx.strokeStyle = 'rgba(0, 0, 230, 0.8)';
-        //     ctx.lineWidth = 0.5;
-        //     drawVerticalLine(x);
-        //     drawHorizontalLine(y);
-        // }
-        // //가이드라인의 가로선---------------------------------------------------------------
-        // function drawHorizontalLine(y) { //마우스 있는 곳에 가로 선 그리기(파랑)
-        //     ctx.beginPath();
-        //     ctx.moveTo(0, y + 0.5);
-        //     ctx.lineTo(ctx.canvas.width, y + 0.5);
-        //     ctx.stroke();
-        // }
-        // //가이드라인의 세로선---------------------------------------------------------------
-        // function drawVerticalLine(x) {
-        //     ctx.beginPath();
-        //     ctx.moveTo(x + 0.5, 0);
-        //     ctx.lineTo(x + 0.5, ctx.canvas.height);
-        //     ctx.stroke();
-        // }
+        //캔버스 숨기기
+        function Canvasoff() {
+            canvas.style.visibility = "hidden";
+
+        }
+
+        //캔버스 보이기 
+        function Canvason() {
+            canvas.style.visibility = "visible";
+            resize_canvas();
+        }
+
+        function replay() {
+            Canvasoff();
+            video.currentTime = 0.0;
+            video.play();
+            Analysis_Button.innerHTML = "Analysis Mode";
+            Analysis_Button.disabled = false;
+        }
 
         //좌표 update(innerText)
         function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
@@ -172,93 +172,46 @@
             array.push(y);
         }
 
-        //캔버스를 비디오 뒤로
-        function Canvasoff() {
-            document.getElementById("vd1").style.zIndex = -1;
-            document.getElementById("cv1").style.zIndex = 1000;
-        }
-
-        //캔버스를 비디오 위로
-        function Canvason() {
-            document.getElementById("vd1").style.zIndex = 1000;
-            document.getElementById("cv1").style.zIndex = -1;
-        }
-
-        //findindex에 사용할 callback함수
-
         //canvas 클릭시좌표저장----------------------------------------
         canvas.addEventListener('click', function (ev) {
             console.log("이벤트 시작");
             //var t1 = video.duration * (seekBar.value / 100)
-            var video = document.getElementById("vd1");
             var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
             var find = 0;
-
             ctx.font = '40px Calibri';
             ctx.fillStyle = "red";
             save_time = video.currentTime;//클릭시 시간
-
             //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함.------------------------------
             function findtime(element) {
                 if (element === save_time) return true;
             }
-
             find = time.findIndex(findtime);
-
-
             console.log("time 배열 : " + time);
             if (video.paused === true) {
                 if ((find === -1)) {
-                    console.log("시간 오직하나")
                     ctx.fillText('⼗', loc.x, loc.y);//멈춤상태일때 x표시 찍기 
                     storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
-                    console.log("find값 : " + find);
                     console.log(coords);
                     time.push(save_time);
                 }
                 else {
-                    console.log("시간이 중복되었어요 ;")
-                    Canvasoff();
+                    //  Canvasoff();
                 }
             } else {
                 Canvasoff();
             }
-            console.log("이벤트 끝 다시 클릭해봐 ");
             //-----------------------------------------------------------------------------------------------
-        });
-
-        video.addEventListener('click', function (ev) {
-            var video = document.getElementById("vd1");
-            var playButton = document.getElementById("play-pause");
-            if (video.paused == true) {
-                Canvason();
-                console.log("click able");
-            }
-            else {
-                Canvason();
-            }
         });
 
         //동영상 컨트롤---------------------------------------------------------
         window.onload = function () {
-
-            // Video
-            var video = document.getElementById("vd1");
-            var playButton = document.getElementById("play-pause");
-            // Sliders
-            var volumeBar = document.getElementById("volume-bar");
-            // 재생/일시정지 기능
-            playButton.addEventListener("click", function () {
-                if (video.paused == true) {
-                    video.play();
-                    coords = [];
-                    Canvason();
-                    playButton.innerHTML = "Pause";
-                } else {
-                    video.pause();
-                    Canvasoff();
-                    playButton.innerHTML = "Play and Clear";
-                }
+            Analysis_Button.addEventListener("click", function () {
+                Canvason();
+                coords = [];
+                resize_canvas();
+                video.pause();
+                Analysis_Button.innerHTML = "Move Slider bar";
+                Analysis_Button.disabled = true;
             });
 
             seekBar.addEventListener("change", function () {
@@ -273,10 +226,8 @@
                 // Update the slider value
                 seekBar.value = value;
             });
-
             // 재생바 드래그하려고 클릭시에 동영상 정지
             seekBar.addEventListener("mousedown", function () {
-                Canvasoff();
                 video.pause();
 
             });
