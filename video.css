@@ -1,16 +1,13 @@
 .container {
-    margin: 0 auto;
     position: relative;
   }
-  
   .video {
-    width: 100%;
+    max-width: 100%;
     height: auto;
     position: absolute;
     top: 0;
     left: 0;
   }
-  
   .canvas {
     position: absolute;
     top: 0;
@@ -43,5 +40,5 @@
 
   #table{
     position:fixed;
-    margin-top: 900px;
+    margin-top: 1000px;
   }
