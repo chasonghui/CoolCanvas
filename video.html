@@ -11,17 +11,23 @@
         <video class="video" id="vd1" controls src="30도.mp4"></video>
         <div id="readout"></div>
         <canvas class="canvas" id="cv1"></canvas>
-        <!-- Video Controls -->
-        <div id="vcontrols" class="video-controls">
-            <button type="button" id="Replay" onclick="replay();">Replay Video</button>
-            <button type="button" id="analysis">Analysis Mode</button>
-            <br>
-            <input type="range" id="seek-bar" value="0">
-            <br>
-            <button id="clear" onclick="clear_click();">Clear ' + '</button>
-            <button id="save" onclick="save_click();">Save as Table</button>
-            <button id="remove" onclick="remove_div(this)">Remove Tables</button>
-        </div>
+
+    </div>
+    <!-- Video Controls -->
+    <div id="vcontrols" class="video-controls">
+        <button type="button" id="Replay" onclick="replay();">Play Video</button>
+        <button type="button" id="analysis">Analysis Mode</button>
+        <br>
+        <input type="range" id="seek-bar" value="0">
+        <br>
+        <button id="Scale-bar" disabled>Scale bar</button>
+        <button id="xy" disabled>Coordinates Setting</button>
+        <br>
+        <button id="clear" onclick="clear_click();">Clear ' + '</button>
+        <button id="save" onclick="save_click();">Save as Table</button>
+        <button id="remove" onclick="remove_div(this);">Remove Tables</button>
+
+
     </div>
     <div id="handson">
         <!--여기에 표 동적 생성-->
@@ -36,7 +42,11 @@
         var seekBar = document.getElementById("seek-bar");
         var Replay = document.getElementById("Replay");
         var Analysis_Button = document.getElementById("analysis");
+        var table = document.getElementById("table");
+        var Scalebar = document.getElementById("Scale-bar");
+        var xy = document.getElementById("xy");
         //비디오 크기
+
         var w = video.offsetWidth;
         var h = video.offsetHeight;
         //canvas 원점 변환
@@ -51,7 +61,7 @@
         var save_time = 0;//클릭시 동영상의 시간
 
         vcontrols.style.marginTop = h + 50;
-        readout.style.marginTop = h + 100;
+        readout.style.marginTop = h + 200;
         seekBar.style.width = w;
 
         // 캔버스 오버레이(vedio 사이즈에 맞게)
@@ -62,9 +72,11 @@
             cv.width = w;
             cv.height = h;
             vcontrols.style.marginTop = h + 50;
-            readout.style.marginTop = h + 100;
+            readout.style.marginTop = h + 200;
             seekBar.style.width = w;
+
         }
+
 
         //캔버스 좌표--------------------------------------------------
         function windowToCanvas(canvas, x, y) {
@@ -87,12 +99,15 @@
             resize_canvas();
         }
 
+        //비디오 replay
         function replay() {
             Canvasoff();
             video.currentTime = 0.0;
             video.play();
             Analysis_Button.innerHTML = "Analysis Mode";
             Analysis_Button.disabled = false;
+            Scalebar.disabled = true;
+            xy.disabled = true;
             resize_canvas();
         }
 
@@ -118,6 +133,7 @@
         function draw_table() {
             var tb1 = document.createElement("div");
             var element = document.getElementById("handson");
+
             tb1.id = "table";
             element.appendChild(tb1);
             var data = [
@@ -184,7 +200,7 @@
             //var t1 = video.duration * (seekBar.value / 100)
             var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
             var find = 0;
-            ctx.font = '40px Calibri';
+            ctx.font = '60px Calibri';
             ctx.fillStyle = "red";
             save_time = video.currentTime;//클릭시 시간
             //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함.------------------------------
@@ -195,7 +211,7 @@
             console.log("time 배열 : " + time);
             if (video.paused === true) {
                 if ((find === -1)) {
-                    ctx.fillText('⼗', loc.x, loc.y);//멈춤상태일때 x표시 찍기 
+                    ctx.fillText('+', loc.x, loc.y);//멈춤상태일때 x표시 찍기 
                     storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
                     console.log(coords);
                     time.push(save_time);
@@ -206,7 +222,7 @@
             } else {
                 Canvasoff();
             }
-            video.currentTime = save_time + 0.05;//프레임 자동으로 이동
+            video.currentTime = save_time + 0.028;//프레임 자동으로 이동
             //-----------------------------------------------------------------------------------------------
         });
 
@@ -218,6 +234,8 @@
                 resize_canvas();
                 video.pause();
                 Analysis_Button.innerHTML = "Move Slider bar";
+                Scalebar.disabled = false;
+                xy.disabled = false;
                 Analysis_Button.disabled = true;
             });
 
