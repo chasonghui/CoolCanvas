@@ -10,11 +10,8 @@ var table = document.getElementById("table");
 var Scalebar = document.getElementById("Scale-bar");
 var xy = document.getElementById("xy");
 //비디오 크기
-
 var w = video.offsetWidth;
 var h = video.offsetHeight;
-//canvas 원점 변환
-ctx.translate(0, -h);
 
 //클릭시 Canvas좌표 저장할 배열
 var coords = [];
@@ -27,6 +24,10 @@ var save_time = 0;//클릭시 동영상의 시간
 vcontrols.style.marginTop = h + 50;
 readout.style.marginTop = h + 200;
 seekBar.style.width = w;
+
+//초기에 scalbar, 좌표계 버튼 비활성화
+Scalebar.disabled = true;
+xy.disabled = true;
 
 // 캔버스 오버레이(vedio 사이즈에 맞게)
 function resize_canvas() {
@@ -70,14 +71,13 @@ function replay() {
     video.play();
     Analysis_Button.innerHTML = "Analysis Mode";
     Analysis_Button.disabled = false;
-    Scalebar.disabled = true;
-    xy.disabled = true;
+
     resize_canvas();
 }
 
 //좌표 update(innerText)
 function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
-    readout.innerText = '좌표 : (' + x.toFixed(0) + ',' + -(y - h).toFixed(0) + ')';
+    readout.innerText = '좌표 : (' + x.toFixed(0) + ',' + y.toFixed(0) + ')';
 }
 
 //clear버튼 : 캔버스 초기화 
@@ -91,6 +91,14 @@ function clear_click() {
     var handson = document.getElementById("hot-display-license-info");
     handson.parentNode.removeChild(handson);
 
+}
+
+function scale_bar() {
+    ctx.moveTo(100, 500);
+    ctx.lineTo(500, 500);
+    ctx.lineWidth = 15;
+    ctx.strokeStyle = "white"
+    ctx.stroke();
 }
 
 //테이블 생성: handsontable 생성(동적)
@@ -160,14 +168,14 @@ function storeCoordinate(x, y, array) {
 
 //canvas 클릭시좌표저장----------------------------------------
 canvas.addEventListener('click', function (ev) {
-    console.log("이벤트 시작");
+    console.log("Canvas Click");
     //var t1 = video.duration * (seekBar.value / 100)
     var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
     var find = 0;
     ctx.font = '60px Calibri';
     ctx.fillStyle = "red";
     save_time = video.currentTime;//클릭시 시간
-    //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함.------------------------------
+    //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함------------------------------
     function findtime(element) {
         if (element === save_time) return true;
     }
@@ -175,9 +183,9 @@ canvas.addEventListener('click', function (ev) {
     console.log("time 배열 : " + time);
     if (video.paused === true) {
         if ((find === -1)) {
-            ctx.fillText('+', loc.x, loc.y);//멈춤상태일때 x표시 찍기 
+            ctx.fillText('+', loc.x, loc.y);//멈춤상태일때만 +표시 찍기 
             storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
-            console.log(coords);
+
             time.push(save_time);
         }
         else {
