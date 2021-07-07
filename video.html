@@ -14,8 +14,7 @@
     <div class="container">
         <video class="video" id="vd1" controls src="60도.mp4"></video>
         <div id="readout"></div>
-        <canvas class="canvas" id="cv1"></canvas>
-
+        <canvas class="canvas" id="cv1">HTML5 Canvas를 지원하지 않는 웹브라우저 입니다.</canvas>
     </div>
     <!-- Video Controls -->
     <div id="vcontrols" class="video-controls">
@@ -24,14 +23,12 @@
         <br>
         <input type="range" id="seek-bar" value="0">
         <br>
-        <button id="Scale-bar" disabled>Scale bar</button>
-        <button id="xy" disabled>Coordinates Setting</button>
+        <button id="Scale-bar" onclick="scale_bar();">Scale bar</button>
+        <button id="xy">Coordinates Setting</button>
         <br>
         <button id="clear" onclick="clear_click();">Clear ' + '</button>
         <button id="save" onclick="save_click();">Save as Table</button>
         <button id="remove" onclick="remove_div(this);">Remove Tables</button>
-
-
     </div>
     <div id="handson">
         <!--여기에 표 동적 생성-->
