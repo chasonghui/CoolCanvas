@@ -2,25 +2,25 @@
     position: relative;
   }
   .video {
-    max-width: 100%;
-    height: auto;
+    /* max-width: 100%; */
+    width:1000px;
+    height: 600px;
     position: absolute;
     top: 0;
     left: 0;
   }
   .canvas {
     position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    /* background-color:rgba(70, 40, 151, 0.2); */
+    width:1000px;
+    height: 600px;
+    background-color:rgba(70, 40, 151, 0.2);
   }
   .video-controls{
     position: absolute;
     height: auto;
   }
   button{
-    font-size: 20px;
+    font-size: 15px;
     padding:5px;
     border-radius: 5px;
     margin: 3px;
@@ -36,6 +36,6 @@
   }
 
   #table{
-    position:fixed;
-    margin-top: 1020px;
+    position:absolute;
+    margin-top: 850px;
   }
