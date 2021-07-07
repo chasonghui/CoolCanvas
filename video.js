@@ -21,7 +21,7 @@ var save_coords = [];
 var time = [];
 var save_time = 0;//클릭시 동영상의 시간
 
-vcontrols.style.marginTop = h + 50;
+vcontrols.style.marginTop = h;
 readout.style.marginTop = h + 200;
 seekBar.style.width = w;
 
@@ -38,7 +38,7 @@ function resize_canvas() {
     var cv = document.getElementById("cv1");
     cv.width = w;
     cv.height = h;
-    vcontrols.style.marginTop = h + 50;
+    vcontrols.style.marginTop = h;
     readout.style.marginTop = h + 200;
     seekBar.style.width = w;
 
