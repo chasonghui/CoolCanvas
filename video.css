@@ -13,7 +13,8 @@
     position: absolute;
     width:1000px;
     height: 600px;
-    background-color:rgba(70, 40, 151, 0.2);
+    /* background-color:rgba(70, 40, 151, 0.2); */
+    cursor: crosshair;
   }
   .video-controls{
     position: absolute;
