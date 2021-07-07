@@ -29,6 +29,8 @@ seekBar.style.width = w;
 Scalebar.disabled = true;
 xy.disabled = true;
 
+Canvasoff();
+
 // 캔버스 오버레이(vedio 사이즈에 맞게)
 function resize_canvas() {
     var w = video.offsetWidth;
@@ -97,7 +99,7 @@ function scale_bar() {
     ctx.moveTo(100, 500);
     ctx.lineTo(500, 500);
     ctx.lineWidth = 15;
-    ctx.strokeStyle = "white"
+    ctx.strokStyle = "white"
     ctx.stroke();
 }
 
@@ -183,7 +185,9 @@ canvas.addEventListener('click', function (ev) {
     console.log("time 배열 : " + time);
     if (video.paused === true) {
         if ((find === -1)) {
-            ctx.fillText('+', loc.x, loc.y);//멈춤상태일때만 +표시 찍기 
+            ctx.beginPath();
+            ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
+            ctx.fill();
             storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
 
             time.push(save_time);
