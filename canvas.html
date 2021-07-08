@@ -12,7 +12,7 @@
 
 <body>
     <div class="container">
-        <video class="video" id="vd1" src="60도.mp4"></video>
+        <video class="video" autoplay id="vd1" src="60도.mp4"></video>
         <div id="readout"></div>
         <canvas class="canvas" id="cv1">HTML5 Canvas를 지원하지 않는 웹브라우저 입니다.</canvas>
     </div>
@@ -20,15 +20,14 @@
     <div id="vcontrols" class="video-controls">
         <input type="range" id="seek-bar" value="0">
         <br>
-        <button type="button" id="Replay" onclick="replay();">Play Video</button>
-        <button type="button" id="analysis">Analysis Mode</button>
-        <button id="clear" onclick="clear_click();">Clear markers</button>
+        <button type="button" id="replay" onclick="replay();">Replay</button>
+        <button type="button" id="analysis" onclick="analysisMode();">Analysis Mode</button>
+        <button id="clear" onclick="clearMarkers();">Clear markers</button>
         <br>
-        <button id="Scale-bar" onclick="scale_bar();">Scale bar</button>
-        <button id="xy">Coordinates Setting</button>
+        <button id="xyline" onclick="xyLine();">xy line</button>
         <br>
-        <button id="save" onclick="save_click();">Save as Table</button>
-        <button id="remove" onclick="remove_div(this);">Remove Tables</button>
+        <button id="save" onclick="saveCoords();">Save as Table</button>
+        <button id="remove" onclick="divRemove(this);">Remove Tables</button>
     </div>
     <div id="handson">
         <!--여기에 표 동적 생성-->

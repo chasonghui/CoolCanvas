@@ -4,11 +4,10 @@ var ctx = canvas.getContext("2d");
 var readout = document.getElementById('readout');
 var vcontrols = document.getElementById("vcontrols");
 var seekBar = document.getElementById("seek-bar");
-var Replay = document.getElementById("Replay");
-var Analysis_Button = document.getElementById("analysis");
+var replayButton = document.getElementById("replay");
+var analysisButton = document.getElementById("analysis");
 var table = document.getElementById("table");
-var Scalebar = document.getElementById("Scale-bar");
-var xy = document.getElementById("xy");
+var xylineButton = document.getElementById("xyline");
 //비디오 크기
 var w = video.offsetWidth;
 var h = video.offsetHeight;
@@ -31,13 +30,13 @@ readout.style.marginTop = h + 200;
 seekBar.style.width = w;
 
 //초기에 scalbar, 좌표계 버튼 비활성화
-Scalebar.disabled = true;
-xy.disabled = true;
+xylineButton.disabled = true;
 
-Canvasoff();
+
+canvasOff();
 
 // 캔버스 오버레이(vedio 사이즈에 맞게)
-function resize_canvas() {
+function resizeCanvas() {
     var w = video.offsetWidth;
     var h = video.offsetHeight;
     var cv = document.getElementById("cv1");
@@ -59,28 +58,27 @@ function windowToCanvas(canvas, x, y) {
 }
 
 //캔버스 숨기기
-function Canvasoff() {
+function canvasOff() {
     canvas.style.visibility = "hidden";
 
 }
 
 //캔버스 보이기 
-function Canvason() {
+function canvasOn() {
     canvas.style.visibility = "visible";
-    resize_canvas();
+    resizeCanvas();
 }
 
 //비디오 replay
 function replay() {
-    Canvasoff();
+    canvasOff();
     video.currentTime = 0.0;
     video.play();
-    Analysis_Button.innerHTML = "Analysis Mode";
-    Analysis_Button.disabled = false;
+    analysisButton.innerHTML = "Analysis Mode";
+    analysisButton.disabled = false;
     //scalbar, 좌표계 버튼 비활성화
-    Scalebar.disabled = true;
-    xy.disabled = true;
-    resize_canvas();
+    xylineButton.disabled = true;
+    resizeCanvas();
 }
 
 //좌표 update(innerText)
@@ -89,7 +87,7 @@ function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
 }
 
 //clear버튼 : 캔버스 초기화 
-function clear_click() {
+function clearMarkers() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     coords = [];
     save_coords = [];
@@ -101,9 +99,9 @@ function clear_click() {
 
 }
 
-//좌표계 UI-------------------------------------------------------------------------------------------------------------------
-function scale_bar() {
-    Scalebar.disabled = true;
+//SCALE 좌표계 UI-------------------------------------------------------------------------------------------------------------------
+function xyLine() {
+    xylineButton.disabled = true;
     alert("1. 원점을 클릭하고 2. X축의 끝을 지정하세요.")
 
 }
@@ -156,10 +154,18 @@ function arrowDrawing(ctx, sx, sy, ex, ey, color) {
 }
 //좌표계 UI끝-----------------------------------------------------------------------------------------------------------------
 
-
+function analysisMode() {
+    canvasOn();
+    coords = [];
+    resizeCanvas();
+    video.pause();
+    analysisButton.innerHTML = "Move Slider bar";
+    xylineButton.disabled = false;
+    analysisButton.disabled = true;
+}
 
 //테이블 생성: handsontable 생성(동적)
-function draw_table() {
+function drawTable() {
     var tb1 = document.createElement("div");
     var element = document.getElementById("handson");
 
@@ -179,15 +185,15 @@ function draw_table() {
 }
 
 //remove 버튼 : id가 table인 div 삭제 
-function remove_div() {
+function divRemove() {
     var child = document.getElementById("table");
     child.parentNode.removeChild(child);
-    clear_click();
+    clearMarkers();
 
 }
 
 //Save 버튼 : 클릭한곳의 좌표 배열에 저장
-function save_click() {
+function saveCoords() {
     save_coords = coords;//save버튼 클릭 후 바로 저장
     for (var i = 0; i < save_coords.length; i++) {
         if (i % 2 == 0 || i == 0)//0이거나 짝수일때 x
@@ -203,8 +209,8 @@ function save_click() {
     }
     console.log("save : " + save_coords);
     //   var newDiv = document.createElement("div");
-    draw_table();
-    clear_click();
+    drawTable();
+    clearMarkers();
 }
 
 //onmouse : 마우스가 canvas위에 있을 때
@@ -223,10 +229,10 @@ function storeCoordinate(x, y, array) {
     array.push(y);
 }
 
-//canvas 클릭시좌표표시,저장----------------------------------------
+//canvas 컨트롤 ----------------------------------------
 canvas.addEventListener('click', function (ev) {
     console.log("Canvas Click");
-    //var t1 = video.duration * (seekBar.value / 100)
+
     var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
     var find = 0;
 
@@ -240,7 +246,7 @@ canvas.addEventListener('click', function (ev) {
     console.log("time 배열 : " + time);
 
     //스케일바 버튼을 안눌렀을때만 
-    if ((video.paused === true) && (Scalebar.disabled === false)) {
+    if ((video.paused === true) && (xylineButton.disabled === false)) {
         if ((find === -1)) {
             ctx.beginPath();
             ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
@@ -251,18 +257,16 @@ canvas.addEventListener('click', function (ev) {
             video.currentTime = save_time + 0.028;//프레임 자동으로 이동
         }
         else {
-            //  Canvasoff();
+            //  canvasOff();
         }
     }
-    else if (Scalebar.disabled === true) {
-
-
+    else if (xylineButton.disabled === true) {
         var x = loc.x;
         var y = loc.y;
         var r = 5;
         var c = "rgb(29, 219, 22)";
 
-        dotDrawing(ctx, x, y, r, c);
+        //dotDrawing(ctx, x, y, r, c);
         clickCnt++;
         console.log(clickCnt % 2);
         if (clickCnt % 2 === 0) {
@@ -270,11 +274,10 @@ canvas.addEventListener('click', function (ev) {
             var beforeDot = create_dot_arr[0];
             var beforeX = beforeDot.x;
             var beforeY = beforeDot.y;
-            lineDrawing(ctx, beforeX, beforeY, x, y, 'yellow');
-            arrowDrawing(ctx, beforeX, beforeY, x, y, 'yellow');
+            lineDrawing(ctx, beforeX, beforeY, x, beforeY, 'yellow');
+            arrowDrawing(ctx, beforeX, beforeY, x, beforeY, 'yellow');//y값은 이전값과 같게(평행)
             create_dot_arr = [];
         } else {
-            console.log("점하나그리고");
             var obj = {};
             obj.color = c;
             obj.x = x;
@@ -284,25 +287,15 @@ canvas.addEventListener('click', function (ev) {
         }
     }
     else {
-        Canvasoff();
+        canvasOff();
     }
 
-    //-----------------------------------------------------------------------------------------------
+
 });
+//-----------------------------------------------------------------------------------------------
 
-//동영상 컨트롤---------------------------------------------------------
+//비디오 컨트롤러, 버튼들---------------------------------------------------------
 window.onload = function () {
-    Analysis_Button.addEventListener("click", function () {
-        Canvason();
-        coords = [];
-        resize_canvas();
-        video.pause();
-        Analysis_Button.innerHTML = "Move Slider bar";
-        Scalebar.disabled = false;
-        xy.disabled = false;
-        Analysis_Button.disabled = true;
-    });
-
     seekBar.addEventListener("change", function () {
         var time = video.duration * (seekBar.value / 100);
         video.currentTime = time;
