@@ -21,6 +21,11 @@ var save_coords = [];
 var time = [];
 var save_time = 0;//클릭시 동영상의 시간
 
+//좌표계 설정---------------------------------
+var create_dot_arr = [];
+var clickCnt = 0;
+//-------------------------------------------
+
 vcontrols.style.marginTop = h;
 readout.style.marginTop = h + 200;
 seekBar.style.width = w;
@@ -72,7 +77,9 @@ function replay() {
     video.play();
     Analysis_Button.innerHTML = "Analysis Mode";
     Analysis_Button.disabled = false;
-
+    //scalbar, 좌표계 버튼 비활성화
+    Scalebar.disabled = true;
+    xy.disabled = true;
     resize_canvas();
 }
 
@@ -94,13 +101,62 @@ function clear_click() {
 
 }
 
+//좌표계 UI-------------------------------------------------------------------------------------------------------------------
 function scale_bar() {
-    ctx.moveTo(100, 500);
-    ctx.lineTo(500, 500);
-    ctx.lineWidth = 15;
-    ctx.strokStyle = "white"
-    ctx.stroke();
+    Scalebar.disabled = true;
+    alert("1. 원점을 클릭하고 2. X축의 끝을 지정하세요.")
+
 }
+function dotDrawing(ctx, x, y, r, color) {
+    if (ctx != null) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.arc(x, y, r, 0, Math.PI * 2, true);
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+function lineDrawing(ctx, sx, sy, ex, ey, color) {
+    if (ctx != null) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(ex, ey);
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+function arrowDrawing(ctx, sx, sy, ex, ey, color) {
+    if (ctx != null) {
+        var aWidth = 5;
+        var aLength = 12;
+        var dx = ex - sx;
+        var dy = ey - sy;
+        var angle = Math.atan2(dy, dx);
+        var length = Math.sqrt(dx * dx + dy * dy);
+
+        //두점 선긋기
+        ctx.translate(sx, sy);
+        ctx.rotate(angle);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+
+        //화살표 모양 만들기
+        ctx.moveTo(length - aLength, -aWidth);
+        ctx.lineTo(length, 0);
+        ctx.lineTo(length - aLength, aWidth);
+
+        ctx.fill();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+}
+//좌표계 UI끝-----------------------------------------------------------------------------------------------------------------
+
+
 
 //테이블 생성: handsontable 생성(동적)
 function draw_table() {
@@ -167,13 +223,13 @@ function storeCoordinate(x, y, array) {
     array.push(y);
 }
 
-//canvas 클릭시좌표저장----------------------------------------
+//canvas 클릭시좌표표시,저장----------------------------------------
 canvas.addEventListener('click', function (ev) {
     console.log("Canvas Click");
     //var t1 = video.duration * (seekBar.value / 100)
     var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
     var find = 0;
-    ctx.font = '60px Calibri';
+
     ctx.fillStyle = "red";
     save_time = video.currentTime;//클릭시 시간
     //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함------------------------------
@@ -182,7 +238,9 @@ canvas.addEventListener('click', function (ev) {
     }
     find = time.findIndex(findtime);
     console.log("time 배열 : " + time);
-    if (video.paused === true) {
+
+    //스케일바 버튼을 안눌렀을때만 
+    if ((video.paused === true) && (Scalebar.disabled === false)) {
         if ((find === -1)) {
             ctx.beginPath();
             ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
@@ -190,14 +248,45 @@ canvas.addEventListener('click', function (ev) {
             storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
 
             time.push(save_time);
+            video.currentTime = save_time + 0.028;//프레임 자동으로 이동
         }
         else {
             //  Canvasoff();
         }
-    } else {
+    }
+    else if (Scalebar.disabled === true) {
+
+
+        var x = loc.x;
+        var y = loc.y;
+        var r = 5;
+        var c = "rgb(29, 219, 22)";
+
+        dotDrawing(ctx, x, y, r, c);
+        clickCnt++;
+        console.log(clickCnt % 2);
+        if (clickCnt % 2 === 0) {
+            console.log("연결선 !");
+            var beforeDot = create_dot_arr[0];
+            var beforeX = beforeDot.x;
+            var beforeY = beforeDot.y;
+            lineDrawing(ctx, beforeX, beforeY, x, y, 'yellow');
+            arrowDrawing(ctx, beforeX, beforeY, x, y, 'yellow');
+            create_dot_arr = [];
+        } else {
+            console.log("점하나그리고");
+            var obj = {};
+            obj.color = c;
+            obj.x = x;
+            obj.y = y;
+            obj.r = r;
+            create_dot_arr.push(obj);
+        }
+    }
+    else {
         Canvasoff();
     }
-    video.currentTime = save_time + 0.028;//프레임 자동으로 이동
+
     //-----------------------------------------------------------------------------------------------
 });
 
