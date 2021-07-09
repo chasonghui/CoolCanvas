@@ -21,15 +21,29 @@
     height: auto;
   }
   button{
-    font-size: 15px;
-    padding:5px;
-    border-radius: 5px;
-    margin: 3px;
+    /* -webkit-appearance: none; */
+    /* -moz-appearance: none; */
+    font-weight: bold;
+    border: 1px solid rgb(23, 40, 199); 
+    background-color: rgba(0,0,0,0); 
+    color: black; 
+    padding: 8px;
+    margin: 5px;
+
+
   }
   button:hover{
-    background:rebeccapurple;
-    color:white;
-    border-radius: 5px;
+    font-weight: bold;
+    border: 1px solid rgb(23, 40, 199); 
+    background-color: rgba(23, 41, 199, 0.616); 
+    color: white; 
+    padding: 8px;
+  }
+
+  button:disabled{
+    font-weight: bold;
+      pointer-events: none;
+      color:rgba(0, 0, 0, 0.479);
   }
 
   #readout{
