@@ -168,8 +168,7 @@ function analysisMode() {
     coords = [];
     resizeCanvas();//캔버스 크기 조절
     video.pause();
-    analysisButton.innerHTML = "Move Slider bar";
-    xylineButton.disabled = false;//좌표계 버튼 활성화
+    xylineButton.disabled = false;//xyline버튼
     analysisButton.disabled = true;//분석모드 버튼 비활성화
     saveButton.disabled = true;
     removeButton.disabled = true;
@@ -252,33 +251,31 @@ canvas.addEventListener('click', function (ev) {
     }
     find = time.findIndex(findtime);
 
-    //분석모드 클릭시 ------------------------------------------------------------
-    //비디오 멈춤, xy라인버튼안누름
+    //analysis mode 분석모드 ------------------------------------------------------------
+    //xy라인버튼 안누름
     if ((video.paused === true) && (xylineButton.disabled === false)) {
-        //분석모드 버튼 누름, xy라인버튼 안누름
-        if ((analysisButton.disabled === true) && (xylineButton.disabled === true) && ((xylineFlag === false))) {
-            alert("xy좌표를 먼저 설정하세요.");
-            clickCnt = 0;
-        }
-        //분석모드 버튼 누름, xy라인버튼 누름, xy라인 설정 함
-        else if ((analysisButton.disabled === true) && (xylineButton.disabled === false) && (xylineFlag === true)) {
-            if ((find === -1)) {
-                ctx.beginPath();
-                console.log(
-                    "들어왔니..?");
-                ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
-                ctx.fill();
-                storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
+        alert("xy좌표를 먼저 설정하세요.");
+        clickCnt = 0;
+    }
+    //xy라인버튼 누름,설정완료
+    else if (xylineFlag === true) {
+        saveButton.disabled = false;
+        removeButton.disabled = false;
+        clearButton.disabled = false;
+        if ((find === -1)) {
+            ctx.beginPath();
+            ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
+            ctx.fill();
+            storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
 
-                time.push(save_time);
-                video.currentTime = save_time + 0.04;//프레임 자동으로 이동
-            }
-            else {
-                //  canvasOff();
-            }
+            time.push(save_time);
+            video.currentTime = save_time + 0.04;//프레임 자동으로 이동
+        }
+        else {
+            //  canvasOff();
         }
     }
-    //xyLine xy좌표 설정-----------------------------------------------------------------------------
+    //xyLine xy좌표버튼 누름, 설정안함-----------------------------------------------------------------------
     else if (xylineFlag === false) {
         //최신 좌표---------------------
         var x = loc.x;
@@ -314,7 +311,6 @@ canvas.addEventListener('click', function (ev) {
             var thirdY = y;
             lineDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');
             arrowDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');//y값은 이전값과 같게(평행)
-            xylineButton.disabled = false;
             xylineFlag = true;
             return;
         }
