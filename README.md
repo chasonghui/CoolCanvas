@@ -1,2 +1,2 @@
-## PEVCE
-A web-based program that analyzes and interacts with users of physics experiment videos
+## Canvas
+Canvas and Video practice
