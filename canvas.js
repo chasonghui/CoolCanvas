@@ -16,7 +16,7 @@ var h = video.offsetHeight;
 var coords = [];
 var xcoords = [];
 var ycoords = [];
-var save_coords = [];
+var savedCoords = [];
 var time = [];
 var save_time = 0;//클릭시 동영상의 시간
 
@@ -29,44 +29,42 @@ vcontrols.style.marginTop = h;
 readout.style.marginTop = h + 200;
 seekBar.style.width = w;
 
-//초기에 scalbar, 좌표계 버튼 비활성화
+//시작 시: scalbar, 좌표계 버튼 비활성화
 xylineButton.disabled = true;
 
-
+//시작 시: canvas off
 canvasOff();
 
 // 캔버스 오버레이(vedio 사이즈에 맞게)
 function resizeCanvas() {
-    var w = video.offsetWidth;
-    var h = video.offsetHeight;
-    var cv = document.getElementById("cv1");
-    cv.width = w;
-    cv.height = h;
-    vcontrols.style.marginTop = h;
-    readout.style.marginTop = h + 200;
-    seekBar.style.width = w;
-
+    var _w = video.offsetWidth;
+    var _h = video.offsetHeight;
+    var _cv = document.getElementById("cv1");
+    _cv.width = _w;
+    _cv.height = _h;
+    vcontrols.style.marginTop = _h;
+    readout.style.marginTop = _h + 200;
+    seekBar.style.width = _w;
 }
 
 //캔버스 좌표--------------------------------------------------
 function windowToCanvas(canvas, x, y) {
-    var bbox = canvas.getBoundingClientRect(); //viewport 기준으로 나의 위치 알려줌
+    var _bbox = canvas.getBoundingClientRect(); //viewport 기준으로 나의 위치 알려줌
     return {
-        x: x - bbox.left * (canvas.width / bbox.width),
-        y: y - bbox.top * (canvas.height / bbox.height)//y좌표수정
+        x: x - _bbox.left * (canvas.width / _bbox.width),
+        y: y - _bbox.top * (canvas.height / _bbox.height)//y좌표수정
     };
 }
 
 //캔버스 숨기기
 function canvasOff() {
     canvas.style.visibility = "hidden";
-
 }
 
 //캔버스 보이기 
 function canvasOn() {
     canvas.style.visibility = "visible";
-    resizeCanvas();
+    //resizeCanvas();
 }
 
 //비디오 replay
@@ -75,10 +73,9 @@ function replay() {
     video.currentTime = 0.0;
     video.play();
     analysisButton.innerHTML = "Analysis Mode";
-    analysisButton.disabled = false;
-    //scalbar, 좌표계 버튼 비활성화
-    xylineButton.disabled = true;
-    resizeCanvas();
+    analysisButton.disabled = false;//분석모드버튼 활성화
+    xylineButton.disabled = true;//좌표계버튼 비활성화
+    //resizeCanvas();
 }
 
 //좌표 update(innerText)
@@ -90,21 +87,20 @@ function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
 function clearMarkers() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     coords = [];
-    save_coords = [];
+    savedCoords = [];
     xcoords = [];
     ycoords = [];
     time = [];
     var handson = document.getElementById("hot-display-license-info");
     handson.parentNode.removeChild(handson);
-
 }
 
 //SCALE 좌표계 UI-------------------------------------------------------------------------------------------------------------------
 function xyLine() {
     xylineButton.disabled = true;
-    alert("1. 원점을 클릭하고 2. X축의 끝을 지정하세요.")
-
+    alert("1. 원점을 클릭하고 2. X축의 끝을 지정하세요.");
 }
+
 function dotDrawing(ctx, x, y, r, color) {
     if (ctx != null) {
         ctx.save();
@@ -116,6 +112,7 @@ function dotDrawing(ctx, x, y, r, color) {
     }
 }
 
+//xy좌표 라인 드로잉
 function lineDrawing(ctx, sx, sy, ex, ey, color) {
     if (ctx != null) {
         ctx.save();
@@ -128,6 +125,7 @@ function lineDrawing(ctx, sx, sy, ex, ey, color) {
     }
 }
 
+//xy좌표 선끝에 화살표모양 드로잉 
 function arrowDrawing(ctx, sx, sy, ex, ey, color) {
     if (ctx != null) {
         var aWidth = 5;
@@ -154,31 +152,32 @@ function arrowDrawing(ctx, sx, sy, ex, ey, color) {
 }
 //좌표계 UI끝-----------------------------------------------------------------------------------------------------------------
 
+//analysis mode 버튼 클릭 시 
 function analysisMode() {
     canvasOn();
     coords = [];
-    resizeCanvas();
+    resizeCanvas();//캔버스 크기 조절
     video.pause();
     analysisButton.innerHTML = "Move Slider bar";
-    xylineButton.disabled = false;
-    analysisButton.disabled = true;
+    xylineButton.disabled = false;//좌표계 버튼 활성화
+    analysisButton.disabled = true;//분석모드 버튼 비활성화
 }
 
 //테이블 생성: handsontable 생성(동적)
 function drawTable() {
-    var tb1 = document.createElement("div");
-    var element = document.getElementById("handson");
+    var _tb1 = document.createElement("div");
+    var _element = document.getElementById("handson");
 
-    tb1.id = "table";
-    element.appendChild(tb1);
-    var data = [
+    _tb1.id = "table";
+    _element.appendChild(_tb1);
+    var _data = [
         xcoords,
         ycoords,
         time
     ];
-    var container = document.getElementById('table');
-    var hot = new Handsontable(container, {
-        data: data,
+    var _container = document.getElementById('table');
+    var hot = new Handsontable(_container, {
+        data: _data,
         rowHeaders: ['x', 'y', 'time'],
         contextMenu: true
     });
@@ -186,28 +185,27 @@ function drawTable() {
 
 //remove 버튼 : id가 table인 div 삭제 
 function divRemove() {
-    var child = document.getElementById("table");
-    child.parentNode.removeChild(child);
+    var _child = document.getElementById("table");
+    _child.parentNode.removeChild(_child);
     clearMarkers();
-
 }
 
 //Save 버튼 : 클릭한곳의 좌표 배열에 저장
 function saveCoords() {
-    save_coords = coords;//save버튼 클릭 후 바로 저장
-    for (var i = 0; i < save_coords.length; i++) {
+    savedCoords = coords;//save버튼 클릭 후 바로 저장
+    for (var i = 0; i < savedCoords.length; i++) {
         if (i % 2 == 0 || i == 0)//0이거나 짝수일때 x
         {
-            xcoords.push(save_coords[i]);
+            xcoords.push(savedCoords[i]);
             console.log("xcoords : " + xcoords);
         }
         else//홀수일때 y
         {
-            ycoords.push(save_coords[i]);
+            ycoords.push(savedCoords[i]);
             console.log("ycoords : " + ycoords);
         }
     }
-    console.log("save : " + save_coords);
+    //console.log("save : " + savedCoords);
     //   var newDiv = document.createElement("div");
     drawTable();
     clearMarkers();
@@ -215,7 +213,6 @@ function saveCoords() {
 
 //onmouse : 마우스가 canvas위에 있을 때
 canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함수 실행
-
     var loc = windowToCanvas(canvas, e.clientX, e.clientY);
     //e.clientX: 마우스의 x좌표값, e.clicentY: 마우스 y좌표값
     // drawBackground();
@@ -229,13 +226,11 @@ function storeCoordinate(x, y, array) {
     array.push(y);
 }
 
-//canvas 컨트롤 ----------------------------------------
+//캔버스 컨트롤 ----------------------------------------
 canvas.addEventListener('click', function (ev) {
     console.log("Canvas Click");
-
     var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
     var find = 0;
-
     ctx.fillStyle = "red";
     save_time = video.currentTime;//클릭시 시간
     //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함------------------------------
@@ -243,47 +238,68 @@ canvas.addEventListener('click', function (ev) {
         if (element === save_time) return true;
     }
     find = time.findIndex(findtime);
-    console.log("time 배열 : " + time);
 
-    //스케일바 버튼을 안눌렀을때만 
+
+
+    //좌표 표시
     if ((video.paused === true) && (xylineButton.disabled === false)) {
-        if ((find === -1)) {
-            ctx.beginPath();
-            ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
-            ctx.fill();
-            storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
-
-            time.push(save_time);
-            video.currentTime = save_time + 0.028;//프레임 자동으로 이동
+        if ((analysisButton.disabled === true) && (xylineButton.disabled === false)) {
+            alert("xy좌표를 먼저 설정하세요.");
+            clickCnt = 0;
         }
         else {
-            //  canvasOff();
+            if ((find === -1)) {
+                ctx.beginPath();
+                ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
+                ctx.fill();
+                storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
+
+                time.push(save_time);
+                video.currentTime = save_time + 0.04;//프레임 자동으로 이동
+            }
+            else {
+                //  canvasOff();
+            }
         }
     }
+    //xyLine xy좌표 설정-----------------------------------------------------------------------------
     else if (xylineButton.disabled === true) {
+        //최신 좌표---------------------
         var x = loc.x;
         var y = loc.y;
+        //------------------------------
         var r = 5;
         var c = "rgb(29, 219, 22)";
-
         //dotDrawing(ctx, x, y, r, c);
+
+        //찍은 좌표 obj저장---------------------------------------------------------------------------------
+        var obj = {};
+        obj.color = c;
+        obj.x = x;
+        obj.y = y;
+        obj.r = r;
+        create_dot_arr.push(obj);
+        //찍은 좌표 obj저장 끝-------------------------------------------------------------------------------
+        console.log(create_dot_arr);
         clickCnt++;
-        console.log(clickCnt % 2);
-        if (clickCnt % 2 === 0) {
-            console.log("연결선 !");
-            var beforeDot = create_dot_arr[0];
-            var beforeX = beforeDot.x;
-            var beforeY = beforeDot.y;
-            lineDrawing(ctx, beforeX, beforeY, x, beforeY, 'yellow');
-            arrowDrawing(ctx, beforeX, beforeY, x, beforeY, 'yellow');//y값은 이전값과 같게(평행)
-            create_dot_arr = [];
-        } else {
-            var obj = {};
-            obj.color = c;
-            obj.x = x;
-            obj.y = y;
-            obj.r = r;
-            create_dot_arr.push(obj);
+        //두번째점 찍었을때
+        if (clickCnt === 2) {
+            var firstDot = create_dot_arr[0];//첫번째 찍은점 불러옴(원점)
+            var secondX = x;
+            var secondY = y;
+            lineDrawing(ctx, firstDot.x, firstDot.y, secondX, firstDot.y, 'yellow');
+            arrowDrawing(ctx, firstDot.x, firstDot.y, secondX, firstDot.y, 'yellow');//y값은 이전값과 같게(평행)
+
+        }
+        //세번째점 찍었을때
+        else if (clickCnt === 3) {
+            var firstDot = create_dot_arr[0];//첫번째 찍은점 불러옴(원점)
+            var thirdX = x;
+            var thirdY = y;
+            lineDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');
+            arrowDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');//y값은 이전값과 같게(평행)
+            xylineButton.disabled = false;
+            return;
         }
     }
     else {
