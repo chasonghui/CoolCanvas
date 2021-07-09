@@ -8,6 +8,9 @@ var replayButton = document.getElementById("replay");
 var analysisButton = document.getElementById("analysis");
 var table = document.getElementById("table");
 var xylineButton = document.getElementById("xyline");
+var saveButton = document.getElementById("save");
+var removeButton = document.getElementById("remove");
+var clearButton = document.getElementById("clear");
 //비디오 크기
 var w = video.offsetWidth;
 var h = video.offsetHeight;
@@ -23,14 +26,18 @@ var save_time = 0;//클릭시 동영상의 시간
 //좌표계 설정---------------------------------
 var create_dot_arr = [];
 var clickCnt = 0;
+var xylineFlag = false;//xy라인 그릴지, 좌표찍을지 결정하는 flag
 //-------------------------------------------
 
 vcontrols.style.marginTop = h;
 readout.style.marginTop = h + 200;
 seekBar.style.width = w;
 
-//시작 시: scalbar, 좌표계 버튼 비활성화
+//시작 시
 xylineButton.disabled = true;
+saveButton.disabled = true;
+removeButton.disabled = true;
+clearButton.disabled = true;
 
 //시작 시: canvas off
 canvasOff();
@@ -75,6 +82,9 @@ function replay() {
     analysisButton.innerHTML = "Analysis Mode";
     analysisButton.disabled = false;//분석모드버튼 활성화
     xylineButton.disabled = true;//좌표계버튼 비활성화
+    saveButton.disabled = true;
+    removeButton.disabled = true;
+    clearButton.disabled = true;
     //resizeCanvas();
 }
 
@@ -98,7 +108,7 @@ function clearMarkers() {
 //SCALE 좌표계 UI-------------------------------------------------------------------------------------------------------------------
 function xyLine() {
     xylineButton.disabled = true;
-    alert("1. 원점을 클릭하고 2. X축의 끝을 지정하세요.");
+    alert("1. 원점 클릭 2. x 최대값클릭 3. y 최대값클릭");
 }
 
 function dotDrawing(ctx, x, y, r, color) {
@@ -161,6 +171,9 @@ function analysisMode() {
     analysisButton.innerHTML = "Move Slider bar";
     xylineButton.disabled = false;//좌표계 버튼 활성화
     analysisButton.disabled = true;//분석모드 버튼 비활성화
+    saveButton.disabled = true;
+    removeButton.disabled = true;
+    clearButton.disabled = true;
 }
 
 //테이블 생성: handsontable 생성(동적)
@@ -239,17 +252,20 @@ canvas.addEventListener('click', function (ev) {
     }
     find = time.findIndex(findtime);
 
-
-
-    //좌표 표시
+    //분석모드 클릭시 ------------------------------------------------------------
+    //비디오 멈춤, xy라인버튼안누름
     if ((video.paused === true) && (xylineButton.disabled === false)) {
-        if ((analysisButton.disabled === true) && (xylineButton.disabled === false)) {
+        //분석모드 버튼 누름, xy라인버튼 안누름
+        if ((analysisButton.disabled === true) && (xylineButton.disabled === true) && ((xylineFlag === false))) {
             alert("xy좌표를 먼저 설정하세요.");
             clickCnt = 0;
         }
-        else {
+        //분석모드 버튼 누름, xy라인버튼 누름, xy라인 설정 함
+        else if ((analysisButton.disabled === true) && (xylineButton.disabled === false) && (xylineFlag === true)) {
             if ((find === -1)) {
                 ctx.beginPath();
+                console.log(
+                    "들어왔니..?");
                 ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
                 ctx.fill();
                 storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
@@ -263,7 +279,7 @@ canvas.addEventListener('click', function (ev) {
         }
     }
     //xyLine xy좌표 설정-----------------------------------------------------------------------------
-    else if (xylineButton.disabled === true) {
+    else if (xylineFlag === false) {
         //최신 좌표---------------------
         var x = loc.x;
         var y = loc.y;
@@ -299,6 +315,7 @@ canvas.addEventListener('click', function (ev) {
             lineDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');
             arrowDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');//y값은 이전값과 같게(평행)
             xylineButton.disabled = false;
+            xylineFlag = true;
             return;
         }
     }
