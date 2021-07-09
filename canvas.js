@@ -30,7 +30,7 @@ var xylineFlag = false;//xy라인 그릴지, 좌표찍을지 결정하는 flag
 //-------------------------------------------
 
 vcontrols.style.marginTop = h;
-readout.style.marginTop = h + 120;
+readout.style.marginTop = h + 170;
 seekBar.style.width = w;
 
 //시작 시
@@ -50,7 +50,7 @@ function resizeCanvas() {
     _cv.width = _w;
     _cv.height = _h;
     vcontrols.style.marginTop = _h;
-    readout.style.marginTop = _h + 120;
+    readout.style.marginTop = _h + 170;
     seekBar.style.width = _w;
 }
 
@@ -303,8 +303,21 @@ canvas.addEventListener('click', function (ev) {
         //찍은 좌표 obj저장 끝-------------------------------------------------------------------------------
         console.log(create_dot_arr);
         clickCnt++;
-        //두번째점 찍었을때
-        if (clickCnt === 2) {
+
+        //첫번째점 찍었을때 = 원점 선택 
+        if (clickCnt === 1) {
+            var firstDot = create_dot_arr[0];
+            //  ctx.translate(firstDot.x,firstDot.y);//첫번째 찍은 점을 원점으로 설정
+            const point = { x: firstDot.x, y: firstDot.y };
+            // const matrix = ctx.getTransform();
+            const transformedPoint = {
+                x: x - firstDot.x,
+                y: y - firstDot.y,
+            };
+            console.log("변환된 점 좌표: " + transformedPoint.x + "," + transformedPoint.y);
+        }
+        // 두번째점 찍었을때
+        else if (clickCnt === 2) {
             var firstDot = create_dot_arr[0];//첫번째 찍은점 불러옴(원점)
             var secondX = x;
             var secondY = y;
