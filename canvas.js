@@ -71,7 +71,6 @@ function canvasOff() {
 //캔버스 보이기 
 function canvasOn() {
     canvas.style.visibility = "visible";
-    //resizeCanvas();
 }
 
 //비디오 replay
@@ -79,13 +78,11 @@ function replay() {
     canvasOff();
     video.currentTime = 0.0;
     video.play();
-    analysisButton.innerHTML = "Analysis Mode";
     analysisButton.disabled = false;//분석모드버튼 활성화
     xylineButton.disabled = true;//좌표계버튼 비활성화
     saveButton.disabled = true;
-    removeButton.disabled = true;
     clearButton.disabled = true;
-    //resizeCanvas();
+    // xylineFlag = "false";
 }
 
 //좌표 update(innerText)
@@ -107,8 +104,9 @@ function clearMarkers() {
 
 //SCALE 좌표계 UI-------------------------------------------------------------------------------------------------------------------
 function xyLine() {
-    xylineButton.disabled = true;
-    alert("1. 원점 클릭 2. x 최대값클릭 3. y 최대값클릭");
+    console.log("xyline버튼 클릭");
+    xylineButton.disabled = true;//xyline버튼 비활성화
+    alert("1.원점 클릭 2.x 최대값클릭 3.y 최대값클릭");
 }
 
 function dotDrawing(ctx, x, y, r, color) {
@@ -164,7 +162,9 @@ function arrowDrawing(ctx, sx, sy, ex, ey, color) {
 
 //analysis mode 버튼 클릭 시 
 function analysisMode() {
-    canvasOn();
+    console.log("분석모드 진입");
+    xylineFlag = false;
+    canvasOn();//캔버스 on
     coords = [];
     resizeCanvas();//캔버스 크기 조절
     video.pause();
@@ -193,6 +193,7 @@ function drawTable() {
         rowHeaders: ['x', 'y', 'time'],
         contextMenu: true
     });
+    xylineFlag = false;
 }
 
 //remove 버튼 : id가 table인 div 삭제 
@@ -200,6 +201,9 @@ function divRemove() {
     var _child = document.getElementById("table");
     _child.parentNode.removeChild(_child);
     clearMarkers();
+    analysisButton.disabled = false;
+    xylineButton.disabled = false;
+
 }
 
 //Save 버튼 : 클릭한곳의 좌표 배열에 저장
@@ -219,6 +223,9 @@ function saveCoords() {
     }
     //console.log("save : " + savedCoords);
     //   var newDiv = document.createElement("div");
+    analysisButton.disabled = false;
+    xylineFlag.disabled = false;
+
     drawTable();
     clearMarkers();
 }
@@ -259,6 +266,7 @@ canvas.addEventListener('click', function (ev) {
     }
     //xy라인버튼 누름,설정완료
     else if (xylineFlag === true) {
+        console.log("xy좌표 설정 되어있음");
         saveButton.disabled = false;
         removeButton.disabled = false;
         clearButton.disabled = false;
@@ -272,11 +280,12 @@ canvas.addEventListener('click', function (ev) {
             video.currentTime = save_time + 0.04;//프레임 자동으로 이동
         }
         else {
-            //  canvasOff();
+            //이상없음
         }
     }
     //xyLine xy좌표버튼 누름, 설정안함-----------------------------------------------------------------------
     else if (xylineFlag === false) {
+        console.log("xy좌표 설정 하는중");
         //최신 좌표---------------------
         var x = loc.x;
         var y = loc.y;
@@ -312,10 +321,16 @@ canvas.addEventListener('click', function (ev) {
             lineDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');
             arrowDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');//y값은 이전값과 같게(평행)
             xylineFlag = true;
+            console.log("xy좌표 설정 완료.");
+            obj = {};//초기화
+            create_dot_arr = [];//초기화
+            clickCnt = 0;
             return;
         }
+
     }
     else {
+        console.log("무슨경우일까... flag: " + xylineFlag);
         canvasOff();
     }
 
