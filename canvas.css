@@ -26,30 +26,35 @@
     /* -webkit-appearance: none; */
     /* -moz-appearance: none; */
     font-weight: bold;
-    border: 1px solid rgb(23, 40, 199); 
-    background-color: rgba(0,0,0,0); 
+    border: 1px solid rgb(0, 0, 0); 
+    background-color: rgba(0, 0, 0, 0); 
     color: black; 
     padding: 8px;
     margin: 5px;
+    font-size: 30px;
 
 
   }
   button:hover{
     font-weight: bold;
-    border: 1px solid rgb(23, 40, 199); 
+    border: 1px solid rgb(0, 0, 0); 
     background-color: rgba(23, 41, 199, 0.616); 
     color: white; 
     padding: 8px;
+    font-size: 30px;
   }
 
   button:disabled{
     font-weight: bold;
       pointer-events: none;
-      color:rgba(0, 0, 0, 0.479);
+      color:rgb(145, 145, 145);
+      font-size: 30px;
   }
 
   #readout{
     position: fixed;
+    font-size: 30px;
+    margin: 7px;
   }
 
   #table{
