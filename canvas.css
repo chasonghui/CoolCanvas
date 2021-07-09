@@ -8,6 +8,8 @@
     position: absolute;
     top: 0;
     left: 0;
+    /* 영상 좌우 반전 */
+    -webkit-transform:rotateY(180deg);
   }
   .canvas {
     position: absolute;
