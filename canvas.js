@@ -76,6 +76,7 @@ function canvasOn() {
 //비디오 replay
 function replay() {
     canvasOff();
+    create_dot_arr = [];//초기화
     video.currentTime = 0.0;
     video.play();
     analysisButton.disabled = false;//분석모드버튼 활성화
@@ -231,10 +232,8 @@ function saveCoords() {
 
 //onmouse : 마우스가 canvas위에 있을 때
 canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함수 실행
-    var loc = windowToCanvas(canvas, e.clientX, e.clientY);
-    //e.clientX: 마우스의 x좌표값, e.clicentY: 마우스 y좌표값
-    // drawBackground();
-    //drawGuidelines(loc.x, loc.y);
+    var dot = create_dot_arr[0];
+    var loc = windowToCanvas(canvas, e.clientX - dot.x, -(e.clientY - dot.y - 15));
     updateReadout(loc.x, loc.y);
 };
 
@@ -251,6 +250,14 @@ canvas.addEventListener('click', function (ev) {
     var find = 0;
     ctx.fillStyle = "red";
     save_time = video.currentTime;//클릭시 시간
+    //최신 좌표---------------------
+    var x = loc.x;
+    var y = loc.y;
+    var r = 5;
+    var c = "rgb(29, 219, 22)";
+    //------------------------------
+
+
     //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함------------------------------
     function findtime(element) {
         if (element === save_time) return true;
@@ -285,14 +292,6 @@ canvas.addEventListener('click', function (ev) {
     //xyLine xy좌표버튼 누름, 설정안함-----------------------------------------------------------------------
     else if (xylineFlag === false) {
         console.log("xy좌표 설정 하는중");
-        //최신 좌표---------------------
-        var x = loc.x;
-        var y = loc.y;
-        //------------------------------
-        var r = 5;
-        var c = "rgb(29, 219, 22)";
-        //dotDrawing(ctx, x, y, r, c);
-
         //찍은 좌표 obj저장---------------------------------------------------------------------------------
         var obj = {};
         obj.color = c;
@@ -303,18 +302,17 @@ canvas.addEventListener('click', function (ev) {
         //찍은 좌표 obj저장 끝-------------------------------------------------------------------------------
         console.log(create_dot_arr);
         clickCnt++;
-
+        var dot = create_dot_arr[0];
+        //  ctx.translate(dot.x,dot.y);//첫번째 찍은 점을 원점으로 설정
+        const point = { x: dot.x, y: dot.y };
+        // const matrix = ctx.getTransform();
+        // const transformedPoint = {
+        //     x: x - point.x,
+        //     y: -(y - point.y),
+        // };
         //첫번째점 찍었을때 = 원점 선택 
         if (clickCnt === 1) {
-            var firstDot = create_dot_arr[0];
-            //  ctx.translate(firstDot.x,firstDot.y);//첫번째 찍은 점을 원점으로 설정
-            const point = { x: firstDot.x, y: firstDot.y };
-            // const matrix = ctx.getTransform();
-            const transformedPoint = {
-                x: x - firstDot.x,
-                y: y - firstDot.y,
-            };
-            console.log("변환된 점 좌표: " + transformedPoint.x + "," + transformedPoint.y);
+
         }
         // 두번째점 찍었을때
         else if (clickCnt === 2) {
@@ -335,7 +333,7 @@ canvas.addEventListener('click', function (ev) {
             xylineFlag = true;
             console.log("xy좌표 설정 완료.");
             obj = {};//초기화
-            create_dot_arr = [];//초기화
+            //create_dot_arr = [];//초기화
             clickCnt = 0;
             return;
         }
