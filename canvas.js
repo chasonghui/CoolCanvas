@@ -255,8 +255,16 @@ canvas.addEventListener('click', function (ev) {
     var y = loc.y;
     var r = 5;
     var c = "rgb(29, 219, 22)";
-    //------------------------------
 
+    //--------원점, xy좌표 선 
+    var obj = {};
+    obj.color = c;
+    obj.x = x;
+    obj.y = y;
+    obj.r = r;
+    create_dot_arr.push(obj);
+    //==================================================
+    var dot = create_dot_arr[0];
 
     //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함------------------------------
     function findtime(element) {
@@ -267,7 +275,7 @@ canvas.addEventListener('click', function (ev) {
     //analysis mode 분석모드 ------------------------------------------------------------
     //xy라인버튼 안누름
     if ((video.paused === true) && (xylineButton.disabled === false)) {
-        alert("xy좌표를 먼저 설정하세요.");
+        alert("[좌표 설정] 버튼을 눌러 좌표를 먼저 설정하세요.");
         clickCnt = 0;
     }
     //xy라인버튼 누름,설정완료
@@ -280,7 +288,7 @@ canvas.addEventListener('click', function (ev) {
             ctx.beginPath();
             ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
             ctx.fill();
-            storeCoordinate(loc.x, loc.y, coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
+            storeCoordinate(loc.x - dot.x, -(loc.y - dot.y), coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
 
             time.push(save_time);
             video.currentTime = save_time + 0.04;//프레임 자동으로 이동
@@ -293,12 +301,7 @@ canvas.addEventListener('click', function (ev) {
     else if (xylineFlag === false) {
         console.log("xy좌표 설정 하는중");
         //찍은 좌표 obj저장---------------------------------------------------------------------------------
-        var obj = {};
-        obj.color = c;
-        obj.x = x;
-        obj.y = y;
-        obj.r = r;
-        create_dot_arr.push(obj);
+
         //찍은 좌표 obj저장 끝-------------------------------------------------------------------------------
         console.log(create_dot_arr);
         clickCnt++;
