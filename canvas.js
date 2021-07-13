@@ -28,7 +28,8 @@ var save_time = 0;//클릭시 동영상의 시간
 var create_dot_arr = [];
 var clickCnt = 0;
 var xylineFlag = false;//xy라인 그릴지, 좌표찍을지 결정하는 flag
-var defalut = 8;
+var defalut = 1;
+var screendot = 0;
 //-------------------------------------------
 
 function init() {
@@ -75,7 +76,7 @@ canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함�
     var dot = create_dot_arr[0];
     //defalut = getValue();
     var loc = windowToCanvas(canvas, e.clientX - dot.x, -(e.clientY - dot.y - 15));
-    updateReadout(loc.x / defalut, loc.y / defalut);//픽셀값으로 나눔 , 8px=1cm
+    updateReadout(loc.x * defalut, loc.y * defalut);//픽셀값으로 나눔 , 8px=1cm
 };
 
 //캔버스 좌표--------------------------------------------------
@@ -225,7 +226,7 @@ canvas.addEventListener('click', function (ev) {
             ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
             ctx.fill();
             //클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수, 8px=1cm(기본값)으로 나눔
-            storeCoordinate(((loc.x - dot.x) / defalut).toFixed(0), -((loc.y - dot.y) / defalut).toFixed(0), coords);
+            storeCoordinate(((loc.x - dot.x) * defalut).toFixed(0), -((loc.y - dot.y) * defalut).toFixed(0), coords);
 
             time.push(save_time);
             video.currentTime = save_time + 0.04;//프레임이동 
@@ -249,8 +250,13 @@ canvas.addEventListener('click', function (ev) {
         clickCnt++;
         var dot = create_dot_arr[0];//원점
 
+
         if (clickCnt === 2) {
             var firstDot = create_dot_arr[0];//첫번째 찍은점 불러옴(원점)
+            //X축 점 저장(두번째점)------------------------------------------
+            var secondDot = create_dot_arr[1];
+            screendot = secondDot.x - firstDot.x;
+            //------------------------------------------------------------------
             var secondX = x;
             var secondY = y;
             ctx.lineWidth = "1";
@@ -322,10 +328,14 @@ function handleSubmit(event) {
 
 //값 받기
 function getValue() {
-    const currentValue = input.value;
+    var origin = screendot;
+    var currentValue = input.value;
     //값 보내기
     if (input.value = '') {
-        currentTime = 8;
+        currentValue = 8;
+    }
+    else {
+        currentValue = currentValue / origin;
     }
     return currentValue;
 }
