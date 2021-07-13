@@ -22,8 +22,13 @@
         <br>
         <button type="button" id="replay" onclick="replay();">재생 모드</button>
         <button type="button" id="analysis" onclick="analysisMode();">분석 모드</button>
+        <br>
         <button id="xyline" onclick="xyLine();">좌표 설정</button>
         <br>
+        <form>
+            <input id="input1" type="text" placeholder="X의 길이 입력 (단위:cm)" />
+            <input id="input2" type="submit" />
+        </form>
         <!-- <button id="clear" onclick="ctx.clearRect(0, 0, canvas.width, canvas.height);">Clear Canvas</button> -->
         <button id="save" onclick="saveCoords();">표로 저장</button>
         <button id="remove" onclick="divRemove(this);">표 삭제</button>
