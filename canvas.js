@@ -41,6 +41,7 @@ function init() {
     xylineButton.disabled = true;
     saveButton.disabled = true;
     removeButton.disabled = true;
+    input.disabled = true;
     //시작 시: canvas off
     canvasOff();
     //input 리로딩 해제
@@ -109,7 +110,7 @@ function guidelength() {
 function xyLine() {
     console.log("xyline버튼 클릭");
     xylineButton.disabled = true;//xyline버튼 비활성화
-    alert("1.원점 클릭 2.x 최대값클릭 3.y 최대값클릭");
+    alert("원점 클릭 -> x최댓값 클릭 -> y 최댓값 클릭");
     guidelength();
 }
 
@@ -273,6 +274,7 @@ canvas.addEventListener('click', function (ev) {
             arrowDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');//y값은 이전값과 같게(평행)
             xylineFlag = true;
             console.log("xy좌표 설정 완료.");
+            input.disabled = false;
             obj = {};//초기화
             clickCnt = 0;
             return;
@@ -310,6 +312,7 @@ function replay() {
     analysisButton.disabled = false;//분석모드버튼 활성화
     xylineButton.disabled = true;//좌표계버튼 비활성화
     saveButton.disabled = true;
+    input.disabled = true;
     // clearButton.disabled = true;
     // xylineFlag = "false";
 }
