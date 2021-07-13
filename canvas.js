@@ -10,6 +10,8 @@ var table = document.getElementById("table");
 var xylineButton = document.getElementById("xyline");
 var saveButton = document.getElementById("save");
 var removeButton = document.getElementById("remove");
+var input = document.getElementById("input1");
+var inputform = document.getElementById("inputform");
 // var clearButton = document.getElementById("clear");
 //비디오 크기
 var w = video.offsetWidth;
@@ -22,25 +24,25 @@ var ycoords = [];
 var savedCoords = [];
 var time = [];
 var save_time = 0;//클릭시 동영상의 시간
-
 //좌표계 설정---------------------------------
 var create_dot_arr = [];
 var clickCnt = 0;
 var xylineFlag = false;//xy라인 그릴지, 좌표찍을지 결정하는 flag
 //-------------------------------------------
 
-vcontrols.style.marginTop = h;
-readout.style.marginTop = h + 170;
-seekBar.style.width = w;
+function init() {
+    vcontrols.style.marginTop = h;
+    readout.style.marginTop = h + 200;
+    seekBar.style.width = w;
 
-//시작 시
-xylineButton.disabled = true;
-saveButton.disabled = true;
-removeButton.disabled = true;
-// clearButton.disabled = true;
+    //시작 시
+    xylineButton.disabled = true;
+    saveButton.disabled = true;
+    removeButton.disabled = true;
+    //시작 시: canvas off
+    canvasOff();
 
-//시작 시: canvas off
-canvasOff();
+}
 
 // 캔버스 오버레이(vedio 사이즈에 맞게)
 function resizeCanvas() {
@@ -50,7 +52,7 @@ function resizeCanvas() {
     _cv.width = _w;
     _cv.height = _h;
     vcontrols.style.marginTop = _h;
-    readout.style.marginTop = _h + 170;
+    readout.style.marginTop = _h + 260;
     seekBar.style.width = _w;
 }
 
@@ -100,6 +102,7 @@ function arrayinitialize() {
     time = [];
 }
 
+//가이드 길이 (오른쪽하단)
 function guidelength() {
     //라인
     //*************70픽셀을 10센치로 가정함******************************** */
@@ -124,15 +127,9 @@ function xyLine() {
     guidelength();
 }
 
-function dotDrawing(ctx, x, y, r, color) {
-    if (ctx != null) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.fillStyle = color;
-        ctx.arc(x, y, r, 0, Math.PI * 2, true);
-        ctx.fill();
-        ctx.restore();
-    }
+//submit 입력 버튼 클릭시 리로딩 없이 값 초기화
+function handleSubmit(event) {
+    inputform.addEventListener('submit', handleSubmit);
 }
 
 //xy좌표 라인 드로잉
@@ -382,3 +379,5 @@ window.onload = function () {
 
     });
 }
+
+init();
