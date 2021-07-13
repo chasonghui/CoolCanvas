@@ -102,13 +102,18 @@ function arrayinitialize() {
 
 function guidelength() {
     //라인
+    //*************70픽셀을 10센치로 가정함******************************** */
     ctx.beginPath();
     // ctx.strokeStyle = color;
-    ctx.moveTo(canvas.width - 100, canvas.height - 50);
+    ctx.moveTo(canvas.width - 120, canvas.height - 50);
     ctx.lineTo(canvas.width - 50, canvas.height - 50);
+    ctx.lineWidth = "10";
+    ctx.strokeStyle = "red";
     ctx.stroke();
     //텍스트
-    ctx.fillText('10 cm', canvas.width - 50, canvas.height - 50);
+    ctx.font = 'bold 20px Courier';
+    ctx.fillStyle = "red";
+    ctx.fillText('10cm', canvas.width - 105, canvas.height - 70);
 }
 
 //SCALE 좌표계 UI-------------------------------------------------------------------------------------------------------------------
