@@ -88,7 +88,7 @@ function replay() {
 
 //좌표 update(innerText)
 function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
-    readout.innerText = '좌표 : (' + x.toFixed(0) + ',' + y.toFixed(0) + ')';
+    readout.innerText = '좌표 : (' + x.toFixed(0) + ',' + y.toFixed(0) + ')';//고정 소수점 표기법으로 표기
 }
 
 //clear버튼 : 캔버스 초기화 
@@ -100,11 +100,23 @@ function arrayinitialize() {
     time = [];
 }
 
+function guidelength() {
+    //라인
+    ctx.beginPath();
+    // ctx.strokeStyle = color;
+    ctx.moveTo(canvas.width - 100, canvas.height - 50);
+    ctx.lineTo(canvas.width - 50, canvas.height - 50);
+    ctx.stroke();
+    //텍스트
+    ctx.fillText('10 cm', canvas.width - 50, canvas.height - 50);
+}
+
 //SCALE 좌표계 UI-------------------------------------------------------------------------------------------------------------------
 function xyLine() {
     console.log("xyline버튼 클릭");
     xylineButton.disabled = true;//xyline버튼 비활성화
     alert("1.원점 클릭 2.x 최대값클릭 3.y 최대값클릭");
+    guidelength();
 }
 
 function dotDrawing(ctx, x, y, r, color) {
@@ -203,6 +215,7 @@ function divRemove() {
     arrayinitialize();
     analysisButton.disabled = false;
     xylineButton.disabled = false;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 }
 
@@ -280,10 +293,10 @@ canvas.addEventListener('click', function (ev) {
             ctx.beginPath();
             ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
             ctx.fill();
-            storeCoordinate(loc.x - dot.x, -(loc.y - dot.y), coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
+            storeCoordinate((loc.x - dot.x).toFixed(0), -(loc.y - dot.y).toFixed(0), coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
 
             time.push(save_time);
-            video.currentTime = save_time + 0.04;//프레임 자동으로 이동
+            video.currentTime = save_time + 0.04;//프레임이동 
         }
         else {
             //이상없음
