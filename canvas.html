@@ -12,7 +12,7 @@
 
 <body>
     <div class="container">
-        <video class="video" autoplay id="vd1" src="60도.mp4"></video>
+        <video class="video" autoplay id="vd1" src="30도.mp4"></video>
         <div id="readout"></div>
         <canvas class="canvas" id="cv1">HTML5 Canvas를 지원하지 않는 웹브라우저 입니다.</canvas>
     </div>
@@ -25,9 +25,8 @@
         <br>
         <button id="xyline" onclick="xyLine();">좌표 설정</button>
         <br>
-        <form>
+        <form id="inputform">
             <input id="input1" type="number" min="0" placeholder="X의 길이 입력 (단위:cm)" />
-            <input id="input2" type="submit" />
         </form>
         <!-- <button id="clear" onclick="ctx.clearRect(0, 0, canvas.width, canvas.height);">Clear Canvas</button> -->
         <button id="save" onclick="saveCoords();">표로 저장</button>
