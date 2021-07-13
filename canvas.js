@@ -105,7 +105,7 @@ function guidelength() {
     //*************70픽셀을 10센치로 가정함******************************** */
     ctx.beginPath();
     // ctx.strokeStyle = color;
-    ctx.moveTo(canvas.width - 120, canvas.height - 50);
+    ctx.moveTo(canvas.width - 130, canvas.height - 50);
     ctx.lineTo(canvas.width - 50, canvas.height - 50);
     ctx.lineWidth = "10";
     ctx.strokeStyle = "red";
@@ -208,7 +208,7 @@ function drawTable() {
         rowHeaders: ['x', 'y', 'time'],
         contextMenu: true
     });
-    xylineFlag = false;
+    //  xylineFlag = false;
     var handson = document.getElementById("hot-display-license-info");
     handson.parentNode.removeChild(handson);
 }
@@ -323,11 +323,6 @@ canvas.addEventListener('click', function (ev) {
         var dot = create_dot_arr[0];
         //  ctx.translate(dot.x,dot.y);//첫번째 찍은 점을 원점으로 설정
         const point = { x: dot.x, y: dot.y };
-        // const matrix = ctx.getTransform();
-        // const transformedPoint = {
-        //     x: x - point.x,
-        //     y: -(y - point.y),
-        // };
         //첫번째점 찍었을때 = 원점 선택 
         if (clickCnt === 1) {
 
@@ -337,6 +332,7 @@ canvas.addEventListener('click', function (ev) {
             var firstDot = create_dot_arr[0];//첫번째 찍은점 불러옴(원점)
             var secondX = x;
             var secondY = y;
+            ctx.lineWidth = "1";
             lineDrawing(ctx, firstDot.x, firstDot.y, secondX, firstDot.y, 'yellow');
             arrowDrawing(ctx, firstDot.x, firstDot.y, secondX, firstDot.y, 'yellow');//y값은 이전값과 같게(평행)
 
