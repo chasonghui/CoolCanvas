@@ -46,6 +46,16 @@ function init() {
 
 }
 
+//캔버스 숨기기
+function canvasOff() {
+    canvas.style.visibility = "hidden";
+}
+
+//캔버스 보이기 
+function canvasOn() {
+    canvas.style.visibility = "visible";
+}
+
 // 캔버스 오버레이(vedio 사이즈에 맞게)
 function resizeCanvas() {
     var _w = video.offsetWidth;
@@ -58,6 +68,13 @@ function resizeCanvas() {
     seekBar.style.width = _w;
 }
 
+//onmouse : 마우스가 canvas위에 있을 때
+canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함수 실행
+    var dot = create_dot_arr[0];
+    var loc = windowToCanvas(canvas, e.clientX - dot.x, -(e.clientY - dot.y - 15));
+    updateReadout(loc.x / 8, loc.y / 8);//픽셀값으로 나눔 80픽셀=10cm, 800px=1cm
+};
+
 //캔버스 좌표--------------------------------------------------
 function windowToCanvas(canvas, x, y) {
     var _bbox = canvas.getBoundingClientRect(); //viewport 기준으로 나의 위치 알려줌
@@ -67,47 +84,10 @@ function windowToCanvas(canvas, x, y) {
     };
 }
 
-//캔버스 숨기기
-function canvasOff() {
-    canvas.style.visibility = "hidden";
-}
-
-//캔버스 보이기 
-function canvasOn() {
-    canvas.style.visibility = "visible";
-}
-
-//비디오 replay
-function replay() {
-    canvasOff();
-    create_dot_arr = [];//초기화
-    video.currentTime = 0.0;
-    video.play();
-    analysisButton.disabled = false;//분석모드버튼 활성화
-    xylineButton.disabled = true;//좌표계버튼 비활성화
-    saveButton.disabled = true;
-    // clearButton.disabled = true;
-    // xylineFlag = "false";
-}
-
-//좌표 update(innerText)
-function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
-    readout.innerText = '좌표 : (' + x.toFixed(0) + ',' + y.toFixed(0) + ')';//고정 소수점 표기법으로 표기
-}
-
-//clear버튼 : 캔버스 초기화 
-function arrayinitialize() {
-    coords = [];
-    savedCoords = [];
-    xcoords = [];
-    ycoords = [];
-    time = [];
-}
-
-//가이드 길이 (오른쪽하단)
+//캔버스 가이드 길이 (오른쪽하단)
 function guidelength() {
     //라인
-    //*************70픽셀을 10센치로 가정함******************************** */
+    //*************80픽셀을 10센치로 가정함******************************** */
     ctx.beginPath();
     // ctx.strokeStyle = color;
     ctx.moveTo(canvas.width - 130, canvas.height - 50);
@@ -121,7 +101,7 @@ function guidelength() {
     ctx.fillText('10cm', canvas.width - 105, canvas.height - 70);
 }
 
-//SCALE 좌표계 UI-------------------------------------------------------------------------------------------------------------------
+//캔버스 xy좌표계 UI-------------------------------------------------------------------------------------------------------------------
 function xyLine() {
     console.log("xyline버튼 클릭");
     xylineButton.disabled = true;//xyline버튼 비활성화
@@ -129,12 +109,7 @@ function xyLine() {
     guidelength();
 }
 
-//submit 입력 버튼 클릭시 리로딩 없이 값 초기화
-function handleSubmit(event) {
-    event.preventDefault();
-    input.value = '';
-}
-
+//캔버스 좌표 드로잉---------------------------------------------------------------------------------------------------------
 //xy좌표 라인 드로잉
 function lineDrawing(ctx, sx, sy, ex, ey, color) {
     if (ctx != null) {
@@ -175,56 +150,7 @@ function arrowDrawing(ctx, sx, sy, ex, ey, color) {
 }
 //좌표계 UI끝-----------------------------------------------------------------------------------------------------------------
 
-//analysis mode 버튼 클릭 시 
-function analysisMode() {
-    console.log("분석모드 진입");
-    xylineFlag = false;
-    canvasOn();//캔버스 on
-    coords = [];
-    resizeCanvas();//캔버스 크기 조절
-    video.pause();
-    xylineButton.disabled = false;//xyline버튼
-    analysisButton.disabled = true;//분석모드 버튼 비활성화
-    saveButton.disabled = true;
-    removeButton.disabled = true;
-    // clearButton.disabled = true;
-}
-
-//테이블 생성: handsontable 생성(동적)
-function drawTable() {
-    var _tb1 = document.createElement("div");
-    var _element = document.getElementById("handson");
-
-    _tb1.id = "table";
-    _element.appendChild(_tb1);
-    var _data = [
-        xcoords,
-        ycoords,
-        time
-    ];
-    var _container = document.getElementById('table');
-    var hot = new Handsontable(_container, {
-        data: _data,
-        rowHeaders: ['x', 'y', 'time'],
-        contextMenu: true
-    });
-    //  xylineFlag = false;
-    var handson = document.getElementById("hot-display-license-info");
-    handson.parentNode.removeChild(handson);
-}
-
-//remove 버튼 : id가 table인 div 삭제 
-function divRemove() {
-    var _child = document.getElementById("table");
-    _child.parentNode.removeChild(_child);
-    arrayinitialize();
-    analysisButton.disabled = false;
-    xylineButton.disabled = false;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-}
-
-//Save 버튼 : 클릭한곳의 좌표 배열에 저장
+//테이블 생성 Save 버튼 : 클릭한곳의 좌표 배열에 저장
 function saveCoords() {
     savedCoords = coords;//save버튼 클릭 후 바로 저장
     for (var i = 0; i < savedCoords.length; i++) {
@@ -247,13 +173,6 @@ function saveCoords() {
     drawTable();
     arrayinitialize();
 }
-
-//onmouse : 마우스가 canvas위에 있을 때
-canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함수 실행
-    var dot = create_dot_arr[0];
-    var loc = windowToCanvas(canvas, e.clientX - dot.x, -(e.clientY - dot.y - 15));
-    updateReadout(loc.x, loc.y);
-};
 
 //배열에 좌표저장(x,y값 저장)
 function storeCoordinate(x, y, array) {
@@ -298,7 +217,8 @@ canvas.addEventListener('click', function (ev) {
             ctx.beginPath();
             ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
             ctx.fill();
-            storeCoordinate((loc.x - dot.x).toFixed(0), -(loc.y - dot.y).toFixed(0), coords);//클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수
+            //클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수, 800px=1cm(기본값)으로 나눔
+            storeCoordinate(((loc.x - dot.x) / 8).toFixed(0), -((loc.y - dot.y) / 8).toFixed(0), coords);
 
             time.push(save_time);
             video.currentTime = save_time + 0.04;//프레임이동 
@@ -361,6 +281,88 @@ canvas.addEventListener('click', function (ev) {
 
 });
 //-----------------------------------------------------------------------------------------------
+//readout 좌표 update(innerText)
+function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
+    readout.innerText = '좌표 : (' + x.toFixed(0) + ',' + y.toFixed(0) + ')';//고정 소수점 표기법으로 표기
+}
+
+//clear버튼 : 배열들 초기화 
+function arrayinitialize() {
+    coords = [];
+    savedCoords = [];
+    xcoords = [];
+    ycoords = [];
+    time = [];
+}
+
+//비디오 replay
+function replay() {
+    canvasOff();
+    create_dot_arr = [];//초기화
+    video.currentTime = 0.0;
+    video.play();
+    analysisButton.disabled = false;//분석모드버튼 활성화
+    xylineButton.disabled = true;//좌표계버튼 비활성화
+    saveButton.disabled = true;
+    // clearButton.disabled = true;
+    // xylineFlag = "false";
+}
+
+
+//submit 입력 버튼 클릭시 리로딩 없이 값 초기화
+function handleSubmit(event) {
+    event.preventDefault();
+    input.value = '';
+}
+
+//분석 모드 버튼 클릭 시 
+function analysisMode() {
+    console.log("분석모드 진입");
+    xylineFlag = false;
+    canvasOn();//캔버스 on
+    coords = [];
+    resizeCanvas();//캔버스 크기 조절
+    video.pause();
+    xylineButton.disabled = false;//xyline버튼
+    analysisButton.disabled = true;//분석모드 버튼 비활성화
+    saveButton.disabled = true;
+    removeButton.disabled = true;
+    // clearButton.disabled = true;
+}
+
+//테이블 생성: handsontable 생성(동적)
+function drawTable() {
+    var _tb1 = document.createElement("div");
+    var _element = document.getElementById("handson");
+
+    _tb1.id = "table";
+    _element.appendChild(_tb1);
+    var _data = [
+        xcoords,
+        ycoords,
+        time
+    ];
+    var _container = document.getElementById('table');
+    var hot = new Handsontable(_container, {
+        data: _data,
+        rowHeaders: ['x', 'y', 'time'],
+        contextMenu: true
+    });
+    //  xylineFlag = false;
+    var handson = document.getElementById("hot-display-license-info");
+    handson.parentNode.removeChild(handson);
+}
+
+//테이블 remove 버튼 : id가 table인 div 삭제 
+function divRemove() {
+    var _child = document.getElementById("table");
+    _child.parentNode.removeChild(_child);
+    arrayinitialize();
+    analysisButton.disabled = false;
+    xylineButton.disabled = false;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+}
 
 //비디오 컨트롤러, 버튼들---------------------------------------------------------
 window.onload = function () {
