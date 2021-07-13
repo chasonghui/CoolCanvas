@@ -41,6 +41,8 @@ function init() {
     removeButton.disabled = true;
     //시작 시: canvas off
     canvasOff();
+    //input 리로딩 해제
+    inputform.addEventListener('submit', handleSubmit);
 
 }
 
@@ -52,7 +54,7 @@ function resizeCanvas() {
     _cv.width = _w;
     _cv.height = _h;
     vcontrols.style.marginTop = _h;
-    readout.style.marginTop = _h + 260;
+    readout.style.marginTop = _h + 300;
     seekBar.style.width = _w;
 }
 
@@ -129,7 +131,8 @@ function xyLine() {
 
 //submit 입력 버튼 클릭시 리로딩 없이 값 초기화
 function handleSubmit(event) {
-    inputform.addEventListener('submit', handleSubmit);
+    event.preventDefault();
+    input.value = '';
 }
 
 //xy좌표 라인 드로잉
