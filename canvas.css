@@ -59,7 +59,7 @@
 
   #table{
     position:absolute;
-    margin-top: 930px;
+    margin-top: 970px;
   }
 
   #input1 {
@@ -67,9 +67,4 @@
       height: 50px;
       padding: 8px;
       margin: 5px;
-  }
-  #input2 {
-    width: 100px;
-      height: 50px;
-      padding: 8px;
   }
