@@ -1,6 +1,6 @@
-var canvas = document.getElementById("cv1");
+var svg = document.getElementById("svg1");
 var video = document.getElementById("vd1");
-var ctx = canvas.getContext("2d");
+var ctx = svg.getContext("2d");
 var readout = document.getElementById('readout');
 var vcontrols = document.getElementById("vcontrols");
 var seekBar = document.getElementById("seek-bar");
@@ -17,7 +17,7 @@ var inputform = document.getElementById("inputform");
 var w = video.offsetWidth;
 var h = video.offsetHeight;
 
-//클릭시 Canvas좌표 저장할 배열
+//클릭시 svg좌표 저장할 배열
 var coords = [];
 var xcoords = [];
 var ycoords = [];
@@ -42,8 +42,8 @@ function init() {
     saveButton.disabled = true;
     removeButton.disabled = true;
     input.disabled = true;
-    //시작 시: canvas off
-    canvasOff();
+    //시작 시: svg off
+    svgOff();
     //input 리로딩 해제
     inputform.addEventListener('submit', handleSubmit);
 
@@ -51,20 +51,20 @@ function init() {
 }
 
 //캔버스 숨기기
-function canvasOff() {
-    canvas.style.visibility = "hidden";
+function svgOff() {
+    svg.style.visibility = "hidden";
 }
 
 //캔버스 보이기 
-function canvasOn() {
-    canvas.style.visibility = "visible";
+function svgOn() {
+    svg.style.visibility = "visible";
 }
 
 // 캔버스 오버레이(vedio 사이즈에 맞게)
-function resizeCanvas() {
+function resizesvg() {
     var _w = video.offsetWidth;
     var _h = video.offsetHeight;
-    var _cv = document.getElementById("cv1");
+    var _cv = document.getElementById("svg1");
     _cv.width = _w;
     _cv.height = _h;
     vcontrols.style.marginTop = _h;
@@ -72,20 +72,20 @@ function resizeCanvas() {
     seekBar.style.width = _w;
 }
 
-//onmouse : 마우스가 canvas위에 있을 때
-canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함수 실행
+//onmouse : 마우스가 svg위에 있을 때
+svg.onmousemove = function (e) { //마우스가 svg 위에 있을 때 함수 실행
     var dot = create_dot_arr[0];
     //defalut = getValue();
-    var loc = windowToCanvas(canvas, e.clientX - dot.x, -(e.clientY - dot.y - 15));
+    var loc = windowTosvg(svg, e.clientX - dot.x, -(e.clientY - dot.y - 15));
     updateReadout(loc.x * defalut, loc.y * defalut);//픽셀값으로 나눔 , 8px=1cm
 };
 
 //캔버스 좌표--------------------------------------------------
-function windowToCanvas(canvas, x, y) {
-    var _bbox = canvas.getBoundingClientRect(); //viewport 기준으로 나의 위치 알려줌
+function windowTosvg(svg, x, y) {
+    var _bbox = svg.getBoundingClientRect(); //viewport 기준으로 나의 위치 알려줌
     return {
-        x: x - _bbox.left * (canvas.width / _bbox.width),
-        y: y - _bbox.top * (canvas.height / _bbox.height)//y좌표수정
+        x: x - _bbox.left * (svg.width / _bbox.width),
+        y: y - _bbox.top * (svg.height / _bbox.height)//y좌표수정
     };
 }
 
@@ -95,15 +95,15 @@ function guidelength() {
     //*************80픽셀을 10센치로 가정함******************************** */
     ctx.beginPath();
     // ctx.strokeStyle = color;
-    ctx.moveTo(canvas.width - 130, canvas.height - 50);
-    ctx.lineTo(canvas.width - 50, canvas.height - 50);
+    ctx.moveTo(svg.width - 130, svg.height - 50);
+    ctx.lineTo(svg.width - 50, svg.height - 50);
     ctx.lineWidth = "10";
     ctx.strokeStyle = "red";
     ctx.stroke();
     //텍스트
     ctx.font = 'bold 20px Courier';
     ctx.fillStyle = "red";
-    ctx.fillText('10cm', canvas.width - 105, canvas.height - 70);
+    ctx.fillText('10cm', svg.width - 105, svg.height - 70);
 }
 
 //캔버스 xy좌표계 UI-------------------------------------------------------------------------------------------------------------------
@@ -191,9 +191,9 @@ function storeCoordinate(x, y, array) {
 }
 
 //캔버스 컨트롤 ----------------------------------------
-canvas.addEventListener('click', function (ev) {
-    console.log("Canvas Click");
-    var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
+svg.addEventListener('click', function (ev) {
+    console.log("svg Click");
+    var loc = windowTosvg(svg, ev.clientX, ev.clientY);
     var find = 0;
     ctx.fillStyle = "red";
     save_time = video.currentTime;//클릭시 시간
@@ -283,7 +283,7 @@ canvas.addEventListener('click', function (ev) {
     }
     else {
         console.log("무슨경우일까... flag: " + xylineFlag);
-        canvasOff();
+        svgOff();
     }
 
 
@@ -305,7 +305,7 @@ function arrayinitialize() {
 
 //비디오 replay
 function replay() {
-    canvasOff();
+    svgOff();
     create_dot_arr = [];//초기화
     video.currentTime = 0.0;
     video.play();
@@ -348,9 +348,9 @@ function analysisMode() {
     console.log("분석모드 진입");
     create_dot_arr = [];//원점 초기화
     xylineFlag = false;
-    canvasOn();//캔버스 on
+    svgOn();//캔버스 on
     coords = [];
-    resizeCanvas();//캔버스 크기 조절
+    resizesvg();//캔버스 크기 조절
     video.pause();
     xylineButton.disabled = false;//xyline버튼
     analysisButton.disabled = true;//분석모드 버튼 비활성화
@@ -389,7 +389,7 @@ function divRemove() {
     arrayinitialize();
     analysisButton.disabled = false;
     xylineButton.disabled = false;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, svg.width, svg.height);
 
 }
 
