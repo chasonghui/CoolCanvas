@@ -5,16 +5,16 @@
     <title>Virtual LAB</title>
     <link rel="stylesheet" href="canvas.css">
     <script src="https://cdn.jsdelivr.net/npm/handsontable@9.0.1/dist/handsontable.full.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/handsontable@9.0.1/dist/handsontable.full.min.css" rel="stylesheet"
         media="screen">
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 </head>
 
 <body>
     <div class="container">
         <video class="video" autoplay id="vd1" src="30도.mp4"></video>
         <div id="readout"></div>
-        <svg class="canvas" id="svg1"></svg>
+        <canvas class="canvas" id="cv1">HTML5 Canvas를 지원하지 않는 웹브라우저 입니다.</canvas>
     </div>
     <!-- Video Controls -->
     <div id="vcontrols" class="video-controls">
