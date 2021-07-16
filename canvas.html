@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Virtual LAB</title>
+    <title>Virtual Lab (Canvas ver.)</title>
+    <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="canvas.css">
     <script src="https://cdn.jsdelivr.net/npm/handsontable@9.0.1/dist/handsontable.full.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -14,7 +15,6 @@
 <body>
     <div class="container">
         <video class="video" autoplay id="vd1" src="30도.mp4"></video>
-        <div id="readout"></div>
         <canvas class="canvas" id="cv1">HTML5 Canvas를 지원하지 않는 웹브라우저 입니다.</canvas>
     </div>
     <!-- Video Controls -->
@@ -32,10 +32,12 @@
         <!-- <button id="clear" onclick="ctx.clearRect(0, 0, canvas.width, canvas.height);">Clear Canvas</button> -->
         <button id="save" onclick="saveCoords();">표로 저장</button>
         <button id="remove" onclick="divRemove(this);">표 삭제</button>
+        <div id="readout"></div>
+        <div id="handson">
+            <!--여기에 표 동적 생성-->
+        </div>
     </div>
-    <div id="handson">
-        <!--여기에 표 동적 생성-->
-    </div>
+
     <script src="canvas.js"></script>
 </body>
 <script>
