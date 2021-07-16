@@ -1,20 +1,22 @@
 .container {
-    position: relative;
+    /* position: relative; */
   }
   .video {
     /* max-width: 100%; */
-    width:1000px;
-    height: 600px;
+    width:100%;
+    height: auto;
     position: absolute;
     top: 0;
     left: 0;
+    margin-top: 8px;
+    margin-left: 8px;
     /* 영상 좌우 반전 */
     -webkit-transform:rotateY(180deg);
   }
   .canvas {
     position: absolute;
-    width:1000px;
-    height: 600px;
+    width:100%;
+    height: auto;
     /* background-color:rgba(70, 40, 151, 0.2); */
     cursor: crosshair;
   }
@@ -52,14 +54,14 @@
   }
 
   #readout{
-    position: fixed;
+    /* position: absolute; */
     font-size: 30px;
     margin: 7px;
   }
 
   #table{
     position:absolute;
-    margin-top: 970px;
+    
   }
 
   #input1 {
