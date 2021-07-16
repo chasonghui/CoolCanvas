@@ -6,12 +6,12 @@ var vcontrols = document.getElementById("vcontrols");
 var seekBar = document.getElementById("seek-bar");
 var replayButton = document.getElementById("replay");
 var analysisButton = document.getElementById("analysis");
-var table = document.getElementById("table");
 var xylineButton = document.getElementById("xyline");
 var saveButton = document.getElementById("save");
 var removeButton = document.getElementById("remove");
 var input = document.getElementById("input1");
 var inputform = document.getElementById("inputform");
+var table = document.getElementById("table");
 // var clearButton = document.getElementById("clear");
 //비디오 크기
 var w = video.offsetWidth;
@@ -28,28 +28,31 @@ var save_time = 0;//클릭시 동영상의 시간
 var create_dot_arr = [];
 var clickCnt = 0;
 var xylineFlag = false;//xy라인 그릴지, 좌표찍을지 결정하는 flag
+var tableFlag = false;
 var defalut = 1;
 var screendot = 0;
 //-------------------------------------------
 
 function init() {
     vcontrols.style.marginTop = h;
-    readout.style.marginTop = h + 200;
+    // readout.style.marginTop = h + 300;
     seekBar.style.width = w;
 
     //시작 시
     xylineButton.disabled = true;
     saveButton.disabled = true;
-    removeButton.disabled = true;
+    // removeButton.disabled = true;
     input.disabled = true;
     //시작 시: canvas off
     canvasOff();
     //input 리로딩 해제
     inputform.addEventListener('submit', handleSubmit);
-
+    resizeCanvas();
 
 }
-
+window.onresize = function (event) {
+    init();
+}
 //캔버스 숨기기
 function canvasOff() {
     canvas.style.visibility = "hidden";
@@ -68,7 +71,7 @@ function resizeCanvas() {
     _cv.width = _w;
     _cv.height = _h;
     vcontrols.style.marginTop = _h;
-    readout.style.marginTop = _h + 300;
+    // readout.style.marginTop = _h + 300;
     seekBar.style.width = _w;
 }
 
@@ -109,6 +112,7 @@ function guidelength() {
 //캔버스 xy좌표계 UI-------------------------------------------------------------------------------------------------------------------
 function xyLine() {
     console.log("xyline버튼 클릭");
+    resizeCanvas();
     xylineButton.disabled = true;//xyline버튼 비활성화
     alert("원점 클릭 -> x최댓값 클릭 -> y 최댓값 클릭");
     guidelength();
@@ -220,7 +224,7 @@ canvas.addEventListener('click', function (ev) {
     else if (xylineFlag === true) {
         console.log("xy좌표 설정 되어있음");
         saveButton.disabled = false;
-        removeButton.disabled = false;
+        // removeButton.disabled = false;
         // clearButton.disabled = false;
         if ((find === -1)) {
             ctx.beginPath();
@@ -315,6 +319,7 @@ function replay() {
     input.disabled = true;
     // clearButton.disabled = true;
     // xylineFlag = "false";
+    resizeCanvas();
 }
 
 
@@ -355,15 +360,15 @@ function analysisMode() {
     xylineButton.disabled = false;//xyline버튼
     analysisButton.disabled = true;//분석모드 버튼 비활성화
     saveButton.disabled = true;
-    removeButton.disabled = true;
+    //removeButton.disabled = true;
     // clearButton.disabled = true;
 }
 
 //테이블 생성: handsontable 생성(동적)
 function drawTable() {
+    tableFlag = true;
     var _tb1 = document.createElement("div");
     var _element = document.getElementById("handson");
-
     _tb1.id = "table";
     _element.appendChild(_tb1);
     var _data = [
@@ -389,6 +394,8 @@ function divRemove() {
     arrayinitialize();
     analysisButton.disabled = false;
     xylineButton.disabled = false;
+    xylineFlag = false;
+    create_dot_arr = [];//원점 초기화
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 }
