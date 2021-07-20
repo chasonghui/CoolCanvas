@@ -34,6 +34,7 @@ var screendot = 0;
 //-------------------------------------------
 
 function init() {
+
     vcontrols.style.marginTop = h;
     // readout.style.marginTop = h + 300;
     seekBar.style.width = w;
@@ -67,9 +68,8 @@ function canvasOn() {
 function resizeCanvas() {
     var _w = video.offsetWidth;
     var _h = video.offsetHeight;
-    var _cv = document.getElementById("cv1");
-    _cv.width = _w;
-    _cv.height = _h;
+    canvas.width = _w;
+    canvas.height = _h;
     vcontrols.style.marginTop = _h;
     // readout.style.marginTop = _h + 300;
     seekBar.style.width = _w;
@@ -96,6 +96,7 @@ function windowToCanvas(canvas, x, y) {
 function guidelength() {
     //라인
     //*************80픽셀을 10센치로 가정함******************************** */
+    console.log(canvas.width);
     ctx.beginPath();
     // ctx.strokeStyle = color;
     ctx.moveTo(canvas.width - 130, canvas.height - 50);
@@ -115,7 +116,7 @@ function xyLine() {
     resizeCanvas();
     xylineButton.disabled = true;//xyline버튼 비활성화
     alert("원점 클릭 -> x최댓값 클릭 -> y 최댓값 클릭");
-    guidelength();
+    //guidelength();
 }
 
 //캔버스 좌표 드로잉---------------------------------------------------------------------------------------------------------
@@ -223,6 +224,7 @@ canvas.addEventListener('click', function (ev) {
     //xy라인버튼 누름,설정완료
     else if (xylineFlag === true) {
         console.log("xy좌표 설정 되어있음");
+
         saveButton.disabled = false;
         // removeButton.disabled = false;
         // clearButton.disabled = false;
@@ -278,6 +280,7 @@ canvas.addEventListener('click', function (ev) {
             arrowDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');//y값은 이전값과 같게(평행)
             xylineFlag = true;
             console.log("xy좌표 설정 완료.");
+            alert("X좌표의 길이를 입력하세요.");
             input.disabled = false;
             obj = {};//초기화
             clickCnt = 0;
@@ -332,6 +335,7 @@ function handleSubmit(event) {
     );
     //input 초기화
     input.value = '';
+    input.disabled = true;
 }
 
 //값 받기
