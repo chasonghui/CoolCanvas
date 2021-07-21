@@ -333,7 +333,7 @@ function handleSubmit(event) {
     event.preventDefault();
     defalut = getValue();
     console.log(
-        "defalut : " + defalut
+        "좌표에 곱해질 값 : " + defalut
     );
     //input 초기화
     input.value = '';
@@ -385,8 +385,6 @@ function drawTable() {
     console.log("xcoords: " + xcoords);
     console.log("ycoords: " + ycoords);
     console.log("time: " + time);
-    console.log("xcoords: " + typeof (xcoords[0]));
-    console.log("ycoords: " + typeof (ycoords[0]));
     var _container = document.getElementById('table');
     var hot = new Handsontable(_container, {
         data: _data,
@@ -403,9 +401,9 @@ function drawTable() {
         xcoords = rows[0]
         ycoords = rows[1]
         time = rows[2]
-        console.log("xcoords: " + xcoords);
-        console.log("ycoords: " + ycoords);
-        console.log("time: " + time);
+        console.log("(수정)xcoords: " + xcoords);
+        console.log("(수정)ycoords: " + ycoords);
+        console.log("(수정)time: " + time);
     });
     //  xylineFlag = false;
     var handson = document.getElementById("hot-display-license-info");
