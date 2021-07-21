@@ -12,6 +12,7 @@ var removeButton = document.getElementById("remove");
 var input = document.getElementById("input1");
 var inputform = document.getElementById("inputform");
 var table = document.getElementById("table");
+var exportString = document.getElementById("export-string")
 // var clearButton = document.getElementById("clear");
 //비디오 크기
 var w = video.offsetWidth;
@@ -96,7 +97,6 @@ function windowToCanvas(canvas, x, y) {
 function guidelength() {
     //라인
     //*************80픽셀을 10센치로 가정함******************************** */
-    console.log(canvas.width);
     ctx.beginPath();
     // ctx.strokeStyle = color;
     ctx.moveTo(canvas.width - 130, canvas.height - 50);
@@ -172,12 +172,12 @@ function saveCoords() {
         if (i % 2 == 0 || i == 0)//0이거나 짝수일때 x
         {
             xcoords.push(savedCoords[i]);
-            console.log("xcoords : " + xcoords);
+            //console.log("xcoords : " + xcoords);
         }
         else//홀수일때 y
         {
             ycoords.push(savedCoords[i]);
-            console.log("ycoords : " + ycoords);
+            //console.log("ycoords : " + ycoords);
         }
     }
     //console.log("save : " + savedCoords);
@@ -187,6 +187,7 @@ function saveCoords() {
 
     drawTable();
     arrayinitialize();
+
 }
 
 //배열에 좌표저장(x,y값 저장)
@@ -386,9 +387,25 @@ function drawTable() {
         rowHeaders: ['x', 'y', 'time'],
         contextMenu: true
     });
+    //표수정시 수정버튼 클릭
+    exportString.addEventListener("click", function (event) {
+        var modify = hot.getPlugin("exportFile").exportAsString("csv");
+        const rows = modify.split('\r\n');
+        xcoords = [];
+        ycoords = [];
+        time = [];
+        xcoords = rows[0]
+        ycoords = rows[1]
+        time = rows[2]
+        console.log("xcoords: " + xcoords);
+        console.log("ycoords: " + xcoords);
+        console.log("time: " + xcoords);
+    });
     //  xylineFlag = false;
     var handson = document.getElementById("hot-display-license-info");
     handson.parentNode.removeChild(handson);
+    console.log("data = " + _data);
+
 }
 
 //테이블 remove 버튼 : id가 table인 div 삭제 
@@ -403,6 +420,8 @@ function divRemove() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 }
+
+
 
 //비디오 컨트롤러, 버튼들---------------------------------------------------------
 window.onload = function () {
