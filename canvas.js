@@ -168,16 +168,16 @@ function getInput() {
 //테이블 생성 Save 버튼 : 클릭한곳의 좌표 배열에 저장
 function saveCoords() {
     savedCoords = coords;//save버튼 클릭 후 바로 저장
+    console.log("savecoords: " + savedCoords + typeof (savedCoords[2]));
+    console.log("savecoords: " + savedCoords + typeof (savedCoords[1]));
     for (var i = 0; i < savedCoords.length; i++) {
         if (i % 2 == 0 || i == 0)//0이거나 짝수일때 x
         {
             xcoords.push(savedCoords[i]);
-            //console.log("xcoords : " + xcoords);
         }
-        else//홀수일때 y
+        else if (i % 2 == 1)//홀수일때 y
         {
             ycoords.push(savedCoords[i]);
-            //console.log("ycoords : " + ycoords);
         }
     }
     //console.log("save : " + savedCoords);
@@ -234,7 +234,8 @@ canvas.addEventListener('click', function (ev) {
             ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
             ctx.fill();
             //클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수, 8px=1cm(기본값)으로 나눔
-            storeCoordinate(((loc.x - dot.x) * defalut).toFixed(0), -((loc.y - dot.y) * defalut).toFixed(0), coords);
+            //+,-를 붙여줌 -> number로 반환
+            storeCoordinate(+((loc.x - dot.x) * defalut).toFixed(0), -((loc.y - dot.y) * defalut).toFixed(0), coords);
 
             time.push(save_time);
             video.currentTime = save_time + 0.04;//프레임이동 
@@ -381,13 +382,18 @@ function drawTable() {
         ycoords,
         time
     ];
+    console.log("xcoords: " + xcoords);
+    console.log("ycoords: " + ycoords);
+    console.log("time: " + time);
+    console.log("xcoords: " + typeof (xcoords[0]));
+    console.log("ycoords: " + typeof (ycoords[0]));
     var _container = document.getElementById('table');
     var hot = new Handsontable(_container, {
         data: _data,
         rowHeaders: ['x', 'y', 'time'],
         contextMenu: true
     });
-    //표수정시 수정버튼 클릭
+    //표수정시 수정버튼 클릭 ==
     exportString.addEventListener("click", function (event) {
         var modify = hot.getPlugin("exportFile").exportAsString("csv");
         const rows = modify.split('\r\n');
@@ -398,13 +404,12 @@ function drawTable() {
         ycoords = rows[1]
         time = rows[2]
         console.log("xcoords: " + xcoords);
-        console.log("ycoords: " + xcoords);
-        console.log("time: " + xcoords);
+        console.log("ycoords: " + ycoords);
+        console.log("time: " + time);
     });
     //  xylineFlag = false;
     var handson = document.getElementById("hot-display-license-info");
     handson.parentNode.removeChild(handson);
-    console.log("data = " + _data);
 
 }
 
