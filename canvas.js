@@ -1,22 +1,8 @@
 var canvas = document.getElementById("cv1");
-var video = document.getElementById("vd1");
 var ctx = canvas.getContext("2d");
-var readout = document.getElementById('readout');
-var vcontrols = document.getElementById("vcontrols");
-var seekBar = document.getElementById("seek-bar");
-var replayButton = document.getElementById("replay");
-var analysisButton = document.getElementById("analysis");
-var xylineButton = document.getElementById("xyline");
-var saveButton = document.getElementById("save");
-var removeButton = document.getElementById("remove");
-var input = document.getElementById("input1");
-var inputform = document.getElementById("inputform");
-var table = document.getElementById("table");
-var exportString = document.getElementById("export-string")
-// var clearButton = document.getElementById("clear");
-//비디오 크기
-var w = video.offsetWidth;
-var h = video.offsetHeight;
+
+var xylineFlag = false;
+var tableFlag = false;
 
 //클릭시 Canvas좌표 저장할 배열
 var coords = [];
@@ -24,18 +10,26 @@ var xcoords = [];
 var ycoords = [];
 var savedCoords = [];
 var time = [];
-var save_time = 0;//클릭시 동영상의 시간
+
 //좌표계 설정---------------------------------
 var create_dot_arr = [];
 var clickCnt = 0;
-var xylineFlag = false;//xy라인 그릴지, 좌표찍을지 결정하는 flag
-var tableFlag = false;
+
 var defalut = 1;
 var screendot = 0;
 //-------------------------------------------
 
 function init() {
-
+    var saveButton = document.getElementById("save");
+    var inputform = document.getElementById("inputform");
+    var input = document.getElementById("input1");
+    var xylineButton = document.getElementById("xyline");
+    var seekBar = document.getElementById("seek-bar");
+    var video = document.getElementById("vd1");
+    var vcontrols = document.getElementById("vcontrols");
+    //비디오 크기
+    var w = video.offsetWidth;
+    var h = video.offsetHeight;
     vcontrols.style.marginTop = h;
     // readout.style.marginTop = h + 300;
     seekBar.style.width = w;
@@ -43,11 +37,11 @@ function init() {
     //시작 시
     xylineButton.disabled = true;
     saveButton.disabled = true;
-    // removeButton.disabled = true;
     input.disabled = true;
     //시작 시: canvas off
     canvasOff();
     //input 리로딩 해제
+
     inputform.addEventListener('submit', handleSubmit);
     resizeCanvas();
 
@@ -67,8 +61,11 @@ function canvasOn() {
 
 // 캔버스 오버레이(vedio 사이즈에 맞게)
 function resizeCanvas() {
+    var video = document.getElementById("vd1");
     var _w = video.offsetWidth;
     var _h = video.offsetHeight;
+    var seekBar = document.getElementById("seek-bar");
+    var vcontrols = document.getElementById("vcontrols");
     canvas.width = _w;
     canvas.height = _h;
     vcontrols.style.marginTop = _h;
@@ -112,6 +109,7 @@ function guidelength() {
 
 //캔버스 xy좌표계 UI-------------------------------------------------------------------------------------------------------------------
 function xyLine() {
+    var xylineButton = document.getElementById("xyline");
     console.log("xyline버튼 클릭");
     resizeCanvas();
     xylineButton.disabled = true;//xyline버튼 비활성화
@@ -162,11 +160,13 @@ function arrowDrawing(ctx, sx, sy, ex, ey, color) {
 
 //캔버스 input 값 가져오기
 function getInput() {
+    var input = document.getElementById("input1");
     return input.value;
 }
 
 //테이블 생성 Save 버튼 : 클릭한곳의 좌표 배열에 저장
 function saveCoords() {
+    var analysisButton = document.getElementById("analysis");
     savedCoords = coords;//save버튼 클릭 후 바로 저장
     console.log("savecoords: " + savedCoords + typeof (savedCoords[2]));
     console.log("savecoords: " + savedCoords + typeof (savedCoords[1]));
@@ -199,6 +199,10 @@ function storeCoordinate(x, y, array) {
 //캔버스 컨트롤 ----------------------------------------
 canvas.addEventListener('click', function (ev) {
     console.log("Canvas Click");
+    var xylineButton = document.getElementById("xyline");
+    var video = document.getElementById("vd1");
+    var save_time = 0;//클릭시 동영상의 시간
+
     var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
     var find = 0;
     ctx.fillStyle = "red";
@@ -225,9 +229,8 @@ canvas.addEventListener('click', function (ev) {
     //xy라인버튼 누름,설정완료
     else if (xylineFlag === true) {
         console.log("xy좌표 설정 되어있음");
-
+        var saveButton = document.getElementById("save");
         saveButton.disabled = false;
-        // removeButton.disabled = false;
         // clearButton.disabled = false;
         if ((find === -1)) {
             ctx.beginPath();
@@ -275,6 +278,7 @@ canvas.addEventListener('click', function (ev) {
         }
         //세번째점 찍었을때
         else if (clickCnt === 3) {
+            var input = document.getElementById("input1");
             var firstDot = create_dot_arr[0];//첫번째 찍은점 불러옴(원점)
             var thirdX = x;
             var thirdY = y;
@@ -300,6 +304,7 @@ canvas.addEventListener('click', function (ev) {
 //-----------------------------------------------------------------------------------------------
 //readout 좌표 update(innerText)
 function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
+    var readout = document.getElementById('readout');
     readout.innerText = '좌표 : (' + x.toFixed(0) + ',' + y.toFixed(0) + ')';//고정 소수점 표기법으로 표기
 }
 
@@ -314,6 +319,11 @@ function arrayinitialize() {
 
 //비디오 replay
 function replay() {
+    var input = document.getElementById("input1");
+    var saveButton = document.getElementById("save");
+    var xylineButton = document.getElementById("xyline");
+    var analysisButton = document.getElementById("analysis");
+    var video = document.getElementById("vd1");
     canvasOff();
     create_dot_arr = [];//초기화
     video.currentTime = 0.0;
@@ -330,6 +340,7 @@ function replay() {
 
 //submit 입력 버튼 클릭시 리로딩 없이 값 초기화
 function handleSubmit(event) {
+    var input = document.getElementById("input1");
     event.preventDefault();
     defalut = getValue();
     console.log(
@@ -342,6 +353,7 @@ function handleSubmit(event) {
 
 //값 받기
 function getValue() {
+    var input = document.getElementById("input1");
     var origin = screendot;
     var currentValue = input.value;
     //값 보내기
@@ -356,6 +368,10 @@ function getValue() {
 
 //분석 모드 버튼 클릭 시 
 function analysisMode() {
+    var saveButton = document.getElementById("save");
+    var xylineButton = document.getElementById("xyline");
+    var analysisButton = document.getElementById("analysis");
+    var video = document.getElementById("vd1");
     console.log("분석모드 진입");
     create_dot_arr = [];//원점 초기화
     xylineFlag = false;
@@ -366,7 +382,6 @@ function analysisMode() {
     xylineButton.disabled = false;//xyline버튼
     analysisButton.disabled = true;//분석모드 버튼 비활성화
     saveButton.disabled = true;
-    //removeButton.disabled = true;
     // clearButton.disabled = true;
 }
 
@@ -392,6 +407,7 @@ function drawTable() {
         contextMenu: true
     });
     //표수정시 수정버튼 클릭 ==
+    var exportString = document.getElementById("export-string")
     exportString.addEventListener("click", function (event) {
         var modify = hot.getPlugin("exportFile").exportAsString("csv");
         const rows = modify.split('\r\n');
@@ -414,6 +430,8 @@ function drawTable() {
 //테이블 remove 버튼 : id가 table인 div 삭제 
 function divRemove() {
     var _child = document.getElementById("table");
+    var xylineButton = document.getElementById("xyline");
+    var analysisButton = document.getElementById("analysis");
     _child.parentNode.removeChild(_child);
     arrayinitialize();
     analysisButton.disabled = false;
@@ -428,6 +446,7 @@ function divRemove() {
 
 //비디오 컨트롤러, 버튼들---------------------------------------------------------
 window.onload = function () {
+    var video = document.getElementById("vd1");
     seekBar.addEventListener("change", function () {
         var time = video.duration * (seekBar.value / 100);
         video.currentTime = time;
