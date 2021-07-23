@@ -337,6 +337,21 @@ function replay() {
     resizeCanvas();
 }
 
+function clearCanvas() {
+    var analysisButton = document.getElementById("analysis");
+    var input = document.getElementById("input1");
+    var saveButton = document.getElementById("save");
+    var xylineButton = document.getElementById("xyline");
+    var analysisButton = document.getElementById("analysis");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvasOff();
+    analysisButton.disabled = false;//분석모드버튼 활성화
+    xylineButton.disabled = true;//좌표계버튼 비활성화
+    saveButton.disabled = true;
+    input.disabled = true;
+    create_dot_arr = [];//초기화
+    coords = [];
+}
 
 //submit 입력 버튼 클릭시 리로딩 없이 값 초기화
 function handleSubmit(event) {
@@ -406,21 +421,22 @@ function drawTable() {
         rowHeaders: ['x', 'y', 'time'],
         contextMenu: true
     });
-    //표수정시 수정버튼 클릭 ==
-    var exportString = document.getElementById("export-string")
-    exportString.addEventListener("click", function (event) {
-        var modify = hot.getPlugin("exportFile").exportAsString("csv");
-        const rows = modify.split('\r\n');
-        xcoords = [];
-        ycoords = [];
-        time = [];
-        xcoords = rows[0]
-        ycoords = rows[1]
-        time = rows[2]
-        console.log("(수정)xcoords: " + xcoords);
-        console.log("(수정)ycoords: " + ycoords);
-        console.log("(수정)time: " + time);
-    });
+    //표수정시 수정버튼 클릭 ---------------------
+    // var exportString = document.getElementById("export-string")
+    // exportString.addEventListener("click", function (event) {
+    //     var modify = hot.getPlugin("exportFile").exportAsString("csv");
+    //     const rows = modify.split('\r\n');
+    //     xcoords = [];
+    //     ycoords = [];
+    //     time = [];
+    //     xcoords = rows[0]
+    //     ycoords = rows[1]
+    //     time = rows[2]
+    //     console.log("(수정)xcoords: " + xcoords);
+    //     console.log("(수정)ycoords: " + ycoords);
+    //     console.log("(수정)time: " + time);
+    // });
+    //--------------------------------------------
     //  xylineFlag = false;
     var handson = document.getElementById("hot-display-license-info");
     handson.parentNode.removeChild(handson);
@@ -447,6 +463,7 @@ function divRemove() {
 //비디오 컨트롤러, 버튼들---------------------------------------------------------
 window.onload = function () {
     var video = document.getElementById("vd1");
+    var seekBar = document.getElementById("seek-bar");
     seekBar.addEventListener("change", function () {
         var time = video.duration * (seekBar.value / 100);
         video.currentTime = time;
