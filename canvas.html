@@ -21,6 +21,9 @@
     <div id="vcontrols" class="video-controls">
         <input type="range" id="seek-bar" value="0">
         <br>
+        <button type="button" id="goback" onclick="gobackFrame();"> ◀ </button>
+        <button type="button" id="gofoward" onclick="gofowardFrame();"> ▶ </button>
+        <br>
         <button type="button" id="replay" onclick="replay();">재생 모드</button>
         <button type="button" id="analysis" onclick="analysisMode();">분석 모드</button>
         <br>
@@ -32,7 +35,7 @@
         </form>
         <button id="save" onclick="saveCoords();">표로 저장</button>
         <button id="remove" onclick="divRemove(this);">표 삭제</button>
-        <button id="export-string">수정</button>
+        <!-- <button id="export-string">수정</button> -->
         <div id="readout"></div>
         <div id="handson">
             <!--여기에 표 동적 생성-->
