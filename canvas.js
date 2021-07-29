@@ -3,13 +3,18 @@ var ctx = canvas.getContext("2d");
 
 var xylineFlag = false;
 var tableFlag = false;
-
+var playFlag = true;
 //클릭시 Canvas좌표 저장할 배열*******************목요일의 내가 레퍼런스전달하는걸로 바꿔서 코드 짜기*******************
 var coords = [];
-var xcoords = [];
-var ycoords = [];
 var savedCoords = [];
-var time = [];
+
+var coordsObject = {
+    xcd: [],
+    ycd: [],
+    frameTime: []
+}
+
+
 
 //좌표계 설정---------------------------------*******************여기도 레퍼런스로부탁해;ㅎ*******************
 var create_dot_arr = [];
@@ -96,6 +101,23 @@ function windowToCanvas(canvas, x, y) {
     };
 }
 
+function playPause() {
+    resizeCanvas();
+    var video = document.getElementById("vd1");
+    var playpause = document.getElementById("pause");
+
+    if (playFlag == true) {
+        video.pause();
+        playpause.innerText = "▷";
+        playFlag = false;
+    }
+    else {
+        video.play();
+        playpause.innerText = "||";
+        playFlag = true;
+    }
+}
+
 //캔버스 가이드 길이 (오른쪽하단)
 function guidelength() {
     //라인
@@ -177,11 +199,11 @@ function saveCoords() {
     for (var i = 0; i < savedCoords.length; i++) {
         if (i % 2 == 0 || i == 0)//0이거나 짝수일때 x
         {
-            xcoords.push(savedCoords[i]);
+            coordsObject.xcd.push(savedCoords[i]);
         }
         else if (i % 2 == 1)//홀수일때 y
         {
-            ycoords.push(savedCoords[i]);
+            coordsObject.ycd.push(savedCoords[i]);
         }
     }
     //console.log("save : " + savedCoords);
@@ -198,7 +220,6 @@ function saveCoords() {
 function storeCoordinate(x, y, array) {
     array.push(x);
     array.push(y);
-    console.log("array " + array);
 }
 
 //캔버스 컨트롤 ----------------------------------------
@@ -207,7 +228,6 @@ canvas.addEventListener('click', function (ev) {
     var xylineButton = document.getElementById("xyline");
     var video = document.getElementById("vd1");
     var save_time = 0;//클릭시 동영상의 시간
-    console.log("클라이언트엑스:" + ev.clientX);
     var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
     var find = 0;
     ctx.fillStyle = "red";
@@ -223,7 +243,7 @@ canvas.addEventListener('click', function (ev) {
     function findtime(element) {
         if (element === save_time) return true;
     }
-    find = time.findIndex(findtime);
+    find = coordsObject.frameTime.findIndex(findtime);
 
     //analysis mode 분석모드 ------------------------------------------------------------
     //xy라인버튼 안누름
@@ -245,7 +265,7 @@ canvas.addEventListener('click', function (ev) {
             //+,-를 붙여줌 -> number로 반환
             storeCoordinate(+((loc.x - dot.x) * defalut).toFixed(3), -((loc.y - dot.y) * defalut).toFixed(3), coords);
 
-            time.push(save_time);
+            coordsObject.frameTime.push(save_time);
             video.currentTime = save_time + 0.04;//프레임이동 
         }
         else {
@@ -263,7 +283,7 @@ canvas.addEventListener('click', function (ev) {
         obj.r = r;
         create_dot_arr.push(obj);
         //찍은 좌표 obj저장 끝-------------------------------------------------------------------------------
-        console.log(create_dot_arr);
+        console.log("xyline: " + create_dot_arr);
         clickCnt++;
         var dot = create_dot_arr[0];//원점
 
@@ -300,7 +320,7 @@ canvas.addEventListener('click', function (ev) {
 
     }
     else {
-        console.log("무슨경우일까... flag: " + xylineFlag);
+        console.log("예상하지못한 오류");
         canvasOff();
     }
 
@@ -317,9 +337,9 @@ function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
 function arrayinitialize() {
     coords = [];
     savedCoords = [];
-    xcoords = [];
-    ycoords = [];
-    time = [];
+    coordsObject.xcd = [];
+    coordsObject.ycd = [];
+    coordsObject.frameTime = [];
 }
 
 //비디오 replay
@@ -423,13 +443,13 @@ function drawTable() {
     _tb1.id = "table";
     _element.appendChild(_tb1);
     var _data = [
-        xcoords,
-        ycoords,
-        time
+        coordsObject.xcd,
+        coordsObject.ycd,
+        coordsObject.frameTime
     ];
-    console.log("xcoords: " + xcoords);
-    console.log("ycoords: " + ycoords);
-    console.log("time: " + time);
+    console.log("coordsObject.xcd: " + coordsObject.xcd);
+    console.log("coordsObject.ycd: " + coordsObject.ycd);
+    console.log("coordsObject.frameTime: " + coordsObject.frameTime);
     var _container = document.getElementById('table');
     var hot = new Handsontable(_container, {
         data: _data,
@@ -441,15 +461,15 @@ function drawTable() {
     // exportString.addEventListener("click", function (event) {
     //     var modify = hot.getPlugin("exportFile").exportAsString("csv");
     //     const rows = modify.split('\r\n');
-    //     xcoords = [];
-    //     ycoords = [];
-    //     time = [];
-    //     xcoords = rows[0]
-    //     ycoords = rows[1]
-    //     time = rows[2]
-    //     console.log("(수정)xcoords: " + xcoords);
-    //     console.log("(수정)ycoords: " + ycoords);
-    //     console.log("(수정)time: " + time);
+    //     coordsObject.xcd = [];
+    //     coordsObject.ycd = [];
+    //     coordsObject.frameTime = [];
+    //     coordsObject.xcd = rows[0]
+    //     coordsObject.ycd = rows[1]
+    //     coordsObject.frameTime = rows[2]
+    //     console.log("(수정)coordsObject.xcd: " + coordsObject.xcd);
+    //     console.log("(수정)coordsObject.ycd: " + coordsObject.ycd);
+    //     console.log("(수정)coordsObject.frameTime: " + coordsObject.frameTime);
     // });
     //--------------------------------------------
     //  xylineFlag = false;
@@ -480,8 +500,8 @@ window.onload = function () {
     var video = document.getElementById("vd1");
     var seekBar = document.getElementById("seek-bar");
     seekBar.addEventListener("change", function () {
-        var time = video.duration * (seekBar.value / 100);
-        video.currentTime = time;
+        var seektime = video.duration * (seekBar.value / 100);
+        video.currentTime = seektime;
     });
 
     // 재생시간에 따른 재생바 이동
