@@ -77,7 +77,13 @@ function resizeCanvas() {
 canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함수 실행
     var dot = create_dot_arr[0];
     //defalut = getValue();
-    var loc = windowToCanvas(canvas, e.clientX - dot.x, -(e.clientY - dot.y - 15));
+    var showX = e.clientX - dot.x;
+    var showY = e.clientY - dot.y;
+    if (showX == -0 || showY == -0) {
+        showX = 0;
+        showY = 0;
+    }
+    var loc = windowToCanvas(canvas, showX, -showY);
     updateReadout(loc.x * defalut, loc.y * defalut);//픽셀값으로 나눔 , 8px=1cm
 };
 
@@ -168,8 +174,6 @@ function getInput() {
 function saveCoords() {
     var analysisButton = document.getElementById("analysis");
     savedCoords = coords;//save버튼 클릭 후 바로 저장
-    console.log("savecoords: " + savedCoords + typeof (savedCoords[2]));
-    console.log("savecoords: " + savedCoords + typeof (savedCoords[1]));
     for (var i = 0; i < savedCoords.length; i++) {
         if (i % 2 == 0 || i == 0)//0이거나 짝수일때 x
         {
@@ -194,6 +198,7 @@ function saveCoords() {
 function storeCoordinate(x, y, array) {
     array.push(x);
     array.push(y);
+    console.log("array " + array);
 }
 
 //캔버스 컨트롤 ----------------------------------------
@@ -202,7 +207,7 @@ canvas.addEventListener('click', function (ev) {
     var xylineButton = document.getElementById("xyline");
     var video = document.getElementById("vd1");
     var save_time = 0;//클릭시 동영상의 시간
-
+    console.log("클라이언트엑스:" + ev.clientX);
     var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
     var find = 0;
     ctx.fillStyle = "red";
@@ -238,7 +243,7 @@ canvas.addEventListener('click', function (ev) {
             ctx.fill();
             //클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수, 8px=1cm(기본값)으로 나눔
             //+,-를 붙여줌 -> number로 반환
-            storeCoordinate(+((loc.x - dot.x) * defalut).toFixed(0), -((loc.y - dot.y) * defalut).toFixed(0), coords);
+            storeCoordinate(+((loc.x - dot.x) * defalut).toFixed(3), -((loc.y - dot.y) * defalut).toFixed(3), coords);
 
             time.push(save_time);
             video.currentTime = save_time + 0.04;//프레임이동 
@@ -305,7 +310,7 @@ canvas.addEventListener('click', function (ev) {
 //readout 좌표 update(innerText)
 function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
     var readout = document.getElementById('readout');
-    readout.innerText = '좌표 : (' + x.toFixed(0) + ',' + y.toFixed(0) + ')';//고정 소수점 표기법으로 표기
+    readout.innerText = '좌표 : (' + x.toFixed(3) + ',' + y.toFixed(3) + ')';//고정 소수점 표기법으로 표기
 }
 
 //clear버튼 : 배열들 초기화 
