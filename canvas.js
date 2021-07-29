@@ -4,14 +4,14 @@ var ctx = canvas.getContext("2d");
 var xylineFlag = false;
 var tableFlag = false;
 
-//클릭시 Canvas좌표 저장할 배열
+//클릭시 Canvas좌표 저장할 배열*******************목요일의 내가 레퍼런스전달하는걸로 바꿔서 코드 짜기*******************
 var coords = [];
 var xcoords = [];
 var ycoords = [];
 var savedCoords = [];
 var time = [];
 
-//좌표계 설정---------------------------------
+//좌표계 설정---------------------------------*******************여기도 레퍼런스로부탁해;ㅎ*******************
 var create_dot_arr = [];
 var clickCnt = 0;
 
@@ -398,6 +398,16 @@ function analysisMode() {
     analysisButton.disabled = true;//분석모드 버튼 비활성화
     saveButton.disabled = true;
     // clearButton.disabled = true;
+}
+
+function gobackFrame() {
+    var video = document.getElementById("vd1");
+    video.currentTime = video.currentTime - 0.04;
+}
+
+function gofowardFrame() {
+    var video = document.getElementById("vd1");
+    video.currentTime = video.currentTime + 0.04;
 }
 
 //테이블 생성: handsontable 생성(동적)
