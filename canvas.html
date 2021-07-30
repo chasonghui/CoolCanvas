@@ -21,26 +21,30 @@
     <div id="vcontrols" class="video-controls">
         <input type="range" id="seek-bar" value="0">
         <br>
-        <button type="button" id="goback" onclick="gobackFrame();"> ◀ </button>
-        <button type="button" id="pause" onclick="vd1.pause()" ;>││</button>
-        <button type="button" id="gofoward" onclick="gofowardFrame();"> ▶ </button>
-        <br>
-        <button type="button" id="replay" onclick="replay();">재생 모드</button>
-        <button type="button" id="analysis" onclick="analysisMode();">분석 모드</button>
-        <br>
-        <button id="xyline" onclick="xyLine();">좌표 설정</button>
-        <button id="clear" onclick="clearCanvas();">지우기</button>
-        <br>
-        <form id="inputform">
-            <input id="input1" type="number" min="0" placeholder="X의 길이 입력 (단위:cm)" /> *입력하지않으면 1픽셀 단위로 좌표가 저장됩니다*
-        </form>
-        <button id="save" onclick="saveCoords();">표로 저장</button>
-        <button id="remove" onclick="divRemove(this);">표 삭제</button>
-        <!-- <button id="export-string">수정</button> -->
-        <div id="readout"></div>
-        <div id="handson">
-            <!--여기에 표 동적 생성-->
-        </div>
+        <button type="button" class="controlbuttons" id="goback" onclick="gobackFrame();">
+            << </button>
+                <button type="button" class="controlbuttons" id="pause" onclick="playPause();">||</button>
+                <button type="button" class="controlbuttons" id="gofoward" onclick="gofowardFrame();"> >> </button>
+                &nbsp;&nbsp;
+                <button type="button" class="controlbuttons" id="replay" onclick="replay();">⟳</button>
+                <button type="button" id="dotRedraw" onclick="retry();">다시찍기</button>
+                <br>
+                <button type="button" id="analysis" onclick="analysisMode();">분석 모드</button>
+                <button id="xyline" onclick="xyLine();">좌표 설정</button>
+                <button id="clear" onclick="clearCanvas();">모두 지우기
+                </button>
+                <br>
+                <form id="inputform">
+                    <input id="input1" type="number" min="0" placeholder="X의 길이 입력 (단위:cm)" /><br>*입력하지않으면 1픽셀 단위로 좌표가
+                    저장됩니다*
+                </form>
+                <button id="save" onclick="saveCoords();">표로 저장</button>
+                <button id="remove" onclick="divRemove(this);">표 삭제</button>
+                <!-- <button id="export-string">수정</button> -->
+                <div id="readout"></div>
+                <div id="handson">
+                    <!--여기에 표 동적 생성-->
+                </div>
 
     </div>
 
