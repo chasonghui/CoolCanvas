@@ -335,6 +335,7 @@ function retry() {
     //현재 비디오 프레임값(video.currentTime)을 저장된 coordsObj의 frametime에서 찾은후 그 위치의 index를 찾아서 
     //x,y인덱스를 찾아서 삭제하고 (오브젝트에서 삭제)
     //그 위치를 clearrect한다..
+
     console.log("현재 점 모든값 삭제 !!")
     var video = document.getElementById("vd1");
     var fixcurrentTime = video.currentTime
@@ -354,6 +355,7 @@ function retry() {
     console.log("coordsObj.xcd: " + coordsObj.xcd);
     console.log("coordsObj.ycd: " + coordsObj.ycd);
     console.log("coordsObj.frameTime: " + coordsObj.frameTime);
+    video.currentTime = video.currentTime - 0.04;
 
 }
 //-------------------------------------------------------------------------------------------
