@@ -1,25 +1,23 @@
 var canvas = document.getElementById("cv1");
 var ctx = canvas.getContext("2d");
 
-var xylineFlag = false;
-var tableFlag = false;
-var playFlag = true;
-//클릭시 Canvas좌표 저장할 배열*******************목요일의 내가 레퍼런스전달하는걸로 바꿔서 코드 짜기*******************
-var coords = [];
-var savedCoords = [];
 
-var coordsObject = {
+//클릭시 Canvas좌표
+var flagObj = {
+    xylineFlag: false,
+    tableFlag: false,
+    playFlag: true
+}
+var coordsObj = {
+    xycoords: [],
+    realx: [],
+    realy: [],
     xcd: [],
     ycd: [],
-    frameTime: []
+    frameTime: [],
+    xylineDot: []
 }
-
-
-
-//좌표계 설정---------------------------------*******************여기도 레퍼런스로부탁해;ㅎ*******************
-var create_dot_arr = [];
 var clickCnt = 0;
-
 var defalut = 1;
 var screendot = 0;
 //-------------------------------------------
@@ -32,17 +30,18 @@ function init() {
     var seekBar = document.getElementById("seek-bar");
     var video = document.getElementById("vd1");
     var vcontrols = document.getElementById("vcontrols");
+    var analysisButton = document.getElementById("analysis");
     //비디오 크기
     var w = video.offsetWidth;
     var h = video.offsetHeight;
     vcontrols.style.marginTop = h;
-    // readout.style.marginTop = h + 300;
     seekBar.style.width = w;
 
     //시작 시
     xylineButton.disabled = true;
     saveButton.disabled = true;
     input.disabled = true;
+    analysisButton.disabled = false;
     //시작 시: canvas off
     canvasOff();
     //input 리로딩 해제
@@ -80,7 +79,7 @@ function resizeCanvas() {
 
 //onmouse : 마우스가 canvas위에 있을 때
 canvas.onmousemove = function (e) { //마우스가 canvas 위에 있을 때 함수 실행
-    var dot = create_dot_arr[0];
+    var dot = coordsObj.xylineDot[0];
     //defalut = getValue();
     var showX = e.clientX - dot.x;
     var showY = e.clientY - dot.y;
@@ -105,16 +104,19 @@ function playPause() {
     resizeCanvas();
     var video = document.getElementById("vd1");
     var playpause = document.getElementById("pause");
+    var analysisButton = document.getElementById("analysis")
 
-    if (playFlag == true) {
+    if (flagObj.playFlag == true) {
+        analysisButton.disabled = false;
         video.pause();
         playpause.innerText = "▷";
-        playFlag = false;
+        flagObj.playFlag = false;
     }
     else {
         video.play();
+        analysisButton.disabled = true;
         playpause.innerText = "||";
-        playFlag = true;
+        flagObj.playFlag = true;
     }
 }
 
@@ -195,21 +197,11 @@ function getInput() {
 //테이블 생성 Save 버튼 : 클릭한곳의 좌표 배열에 저장
 function saveCoords() {
     var analysisButton = document.getElementById("analysis");
-    savedCoords = coords;//save버튼 클릭 후 바로 저장
-    for (var i = 0; i < savedCoords.length; i++) {
-        if (i % 2 == 0 || i == 0)//0이거나 짝수일때 x
-        {
-            coordsObject.xcd.push(savedCoords[i]);
-        }
-        else if (i % 2 == 1)//홀수일때 y
-        {
-            coordsObject.ycd.push(savedCoords[i]);
-        }
-    }
-    //console.log("save : " + savedCoords);
+
+    //console.log("save : " + coordsObj.xycoords);
     //   var newDiv = document.createElement("div");
     analysisButton.disabled = false;
-    xylineFlag.disabled = false;
+    flagObj.xylineFlag.disabled = false;
 
     drawTable();
     arrayinitialize();
@@ -217,33 +209,38 @@ function saveCoords() {
 }
 
 //배열에 좌표저장(x,y값 저장)
-function storeCoordinate(x, y, array) {
-    array.push(x);
-    array.push(y);
+function storexcoords(x, xarray) {
+    xarray.push(x);
+
 }
+function storeycoords(y, yarray) {
+    yarray.push(y);
+}
+
 
 //캔버스 컨트롤 ----------------------------------------
 canvas.addEventListener('click', function (ev) {
     console.log("Canvas Click");
     var xylineButton = document.getElementById("xyline");
     var video = document.getElementById("vd1");
-    var save_time = 0;//클릭시 동영상의 시간
     var loc = windowToCanvas(canvas, ev.clientX, ev.clientY);
-    var find = 0;
-    ctx.fillStyle = "red";
-    save_time = video.currentTime;//클릭시 시간
+    var dot = coordsObj.xylineDot[0];//원점
+    var save_time = 0;//클릭시 동영상의 시간
+    var find = 0;//프레임중복제거변수 
     //최신 좌표---------------------
     var x = loc.x;
     var y = loc.y;
     var r = 5;
     var c = "rgb(29, 219, 22)";
     //------------------------------
-    var dot = create_dot_arr[0];//원점
+    ctx.fillStyle = "red";
+    save_time = video.currentTime;//클릭시 시간
+
     //한 프레임에 하나만 찍기 : time배열에 동일한 시간이 존재하지 않도록함------------------------------
     function findtime(element) {
         if (element === save_time) return true;
     }
-    find = coordsObject.frameTime.findIndex(findtime);
+    find = coordsObj.frameTime.findIndex(findtime);
 
     //analysis mode 분석모드 ------------------------------------------------------------
     //xy라인버튼 안누름
@@ -252,28 +249,32 @@ canvas.addEventListener('click', function (ev) {
         clickCnt = 0;
     }
     //xy라인버튼 누름,설정완료
-    else if (xylineFlag === true) {
-        console.log("xy좌표 설정 되어있음");
+    else if (flagObj.xylineFlag === true) {
+        console.log("좌표 찍음");
         var saveButton = document.getElementById("save");
         saveButton.disabled = false;
         // clearButton.disabled = false;
         if ((find === -1)) {
             ctx.beginPath();
             ctx.arc(loc.x, loc.y, 5, 0, Math.PI * 2, true);
+            //실제 좌표 push -> 다시찍기 할때 clearrect에 사용될
+            coordsObj.realx.push(loc.x);
+            coordsObj.realy.push(loc.y);
             ctx.fill();
             //클릭한 좌표를 coordes배열에 저장 x:짝수, y:홀수, 8px=1cm(기본값)으로 나눔
             //+,-를 붙여줌 -> number로 반환
-            storeCoordinate(+((loc.x - dot.x) * defalut).toFixed(3), -((loc.y - dot.y) * defalut).toFixed(3), coords);
-
-            coordsObject.frameTime.push(save_time);
+            storexcoords(+((loc.x - dot.x) * defalut).toFixed(3), coordsObj.xcd);
+            storeycoords(-((loc.y - dot.y) * defalut).toFixed(3), coordsObj.ycd);
+            coordsObj.frameTime.push(save_time.toFixed(3));
             video.currentTime = save_time + 0.04;//프레임이동 
         }
         else {
+            console.log("엥 여길 왜들어와");
             //이상없음
         }
     }
     //xyLine xy좌표버튼 누름, 설정안함-----------------------------------------------------------------------
-    else if (xylineFlag === false) {
+    else if (flagObj.xylineFlag === false) {
         console.log("xy좌표 설정 하는중");
         //찍은 좌표 obj저장---------------------------------------------------------------------------------
         var obj = {};
@@ -281,17 +282,17 @@ canvas.addEventListener('click', function (ev) {
         obj.x = x;
         obj.y = y;
         obj.r = r;
-        create_dot_arr.push(obj);
+        coordsObj.xylineDot.push(obj);
         //찍은 좌표 obj저장 끝-------------------------------------------------------------------------------
-        console.log("xyline: " + create_dot_arr);
+        //console.log("xylineDot: " + JSON.stringify(coordsObj.xylineDot));
         clickCnt++;
-        var dot = create_dot_arr[0];//원점
+        var dot = coordsObj.xylineDot[0];//원점
 
 
         if (clickCnt === 2) {
-            var firstDot = create_dot_arr[0];//첫번째 찍은점 불러옴(원점)
+            var firstDot = coordsObj.xylineDot[0];//첫번째 찍은점 불러옴(원점)
             //X축 점 저장(두번째점)------------------------------------------
-            var secondDot = create_dot_arr[1];
+            var secondDot = coordsObj.xylineDot[1];
             screendot = secondDot.x - firstDot.x;
             //------------------------------------------------------------------
             var secondX = x;
@@ -303,14 +304,15 @@ canvas.addEventListener('click', function (ev) {
         }
         //세번째점 찍었을때
         else if (clickCnt === 3) {
-            var input = document.getElementById("input1");
-            var firstDot = create_dot_arr[0];//첫번째 찍은점 불러옴(원점)
+            console.log("xy좌표 설정 완료.");
             var thirdX = x;
             var thirdY = y;
+            flagObj.xylineFlag = true;
+            var input = document.getElementById("input1");
+            var firstDot = coordsObj.xylineDot[0];//첫번째 찍은점 불러옴(원점)
             lineDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');
             arrowDrawing(ctx, firstDot.x, firstDot.y, firstDot.x, thirdY, 'yellow');//y값은 이전값과 같게(평행)
-            xylineFlag = true;
-            console.log("xy좌표 설정 완료.");
+
             alert("X좌표의 길이를 입력하세요.");
             input.disabled = false;
             obj = {};//초기화
@@ -327,6 +329,28 @@ canvas.addEventListener('click', function (ev) {
 
 });
 //-----------------------------------------------------------------------------------------------
+
+//다시 찍기-----------------------------------------------------------------------------------
+function retry() {
+    //현재 비디오 프레임값(video.currentTime)을 저장된 coordsObj의 frametime에서 찾은후 그 위치의 index를 찾아서 
+    //x,y인덱스를 찾아서 삭제하고 (오브젝트에서 삭제)
+    //그 위치를 clearrect한다..
+    console.log("현재 점 모든값 삭제 !!")
+    var video = document.getElementById("vd1");
+    var fixcurrentTime = video.currentTime
+    var frameindex = coordsObj.frameTime.indexOf((fixcurrentTime - 0.04).toFixed(3));
+    console.log("frametime : " + coordsObj.frameTime);
+    console.log("fixcurrentTime.toFixed(3)-0.04: " + (fixcurrentTime - 0.04).toFixed(3));
+    console.log("frameindex: " + frameindex);
+    ctx.clearRect(coordsObj.realx[frameindex] - 5, coordsObj.realy[frameindex] - 5, 10, 10)
+    coordsObj.frameTime.splice(frameindex, 1);
+    coordsObj.xcd.splice(frameindex, 1);
+    coordsObj.ycd.splice(frameindex, 1);
+    coordsObj.realx.splice(frameindex, 1);
+    coordsObj.realy.splice(frameindex, 1);
+}
+//-------------------------------------------------------------------------------------------
+
 //readout 좌표 update(innerText)
 function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
     var readout = document.getElementById('readout');
@@ -335,11 +359,13 @@ function updateReadout(x, y) { //div 부분에 좌표 입력(readout)
 
 //clear버튼 : 배열들 초기화 
 function arrayinitialize() {
-    coords = [];
-    savedCoords = [];
-    coordsObject.xcd = [];
-    coordsObject.ycd = [];
-    coordsObject.frameTime = [];
+    coordsObj.xylineDot = [];//초기화
+    coordsObj.xycoords = [];
+    coordsObj.frameTime = [];
+    coordsObj.realx = [];
+    coordsObj.realy = [];
+    coordsObj.xcd = [];
+    coordsObj.ycd = [];
 }
 
 //비디오 replay
@@ -350,7 +376,7 @@ function replay() {
     var analysisButton = document.getElementById("analysis");
     var video = document.getElementById("vd1");
     canvasOff();
-    create_dot_arr = [];//초기화
+    coordsObj.xylineDot = [];//초기화
     video.currentTime = 0.0;
     video.play();
     analysisButton.disabled = false;//분석모드버튼 활성화
@@ -358,7 +384,7 @@ function replay() {
     saveButton.disabled = true;
     input.disabled = true;
     // clearButton.disabled = true;
-    // xylineFlag = "false";
+    // flagObj.xylineFlag = "false";
     resizeCanvas();
 }
 
@@ -374,8 +400,8 @@ function clearCanvas() {
     xylineButton.disabled = true;//좌표계버튼 비활성화
     saveButton.disabled = true;
     input.disabled = true;
-    create_dot_arr = [];//초기화
-    coords = [];
+    //arrayinitialize();
+
 }
 
 //submit 입력 버튼 클릭시 리로딩 없이 값 초기화
@@ -413,10 +439,10 @@ function analysisMode() {
     var analysisButton = document.getElementById("analysis");
     var video = document.getElementById("vd1");
     console.log("분석모드 진입");
-    create_dot_arr = [];//원점 초기화
-    xylineFlag = false;
+    coordsObj.xylineDot = [];//원점 초기화
+    flagObj.xylineFlag = false;
     canvasOn();//캔버스 on
-    coords = [];
+    coordsObj.xycoords = [];
     resizeCanvas();//캔버스 크기 조절
     video.pause();
     xylineButton.disabled = false;//xyline버튼
@@ -437,19 +463,20 @@ function gofowardFrame() {
 
 //테이블 생성: handsontable 생성(동적)
 function drawTable() {
-    tableFlag = true;
+    clearCanvas();
+    flagObj.tableFlag = true;
     var _tb1 = document.createElement("div");
     var _element = document.getElementById("handson");
     _tb1.id = "table";
     _element.appendChild(_tb1);
     var _data = [
-        coordsObject.xcd,
-        coordsObject.ycd,
-        coordsObject.frameTime
+        coordsObj.xcd,
+        coordsObj.ycd,
+        coordsObj.frameTime
     ];
-    console.log("coordsObject.xcd: " + coordsObject.xcd);
-    console.log("coordsObject.ycd: " + coordsObject.ycd);
-    console.log("coordsObject.frameTime: " + coordsObject.frameTime);
+    console.log("coordsObj.xcd: " + coordsObj.xcd);
+    console.log("coordsObj.ycd: " + coordsObj.ycd);
+    console.log("coordsObj.frameTime: " + coordsObj.frameTime);
     var _container = document.getElementById('table');
     var hot = new Handsontable(_container, {
         data: _data,
@@ -461,18 +488,18 @@ function drawTable() {
     // exportString.addEventListener("click", function (event) {
     //     var modify = hot.getPlugin("exportFile").exportAsString("csv");
     //     const rows = modify.split('\r\n');
-    //     coordsObject.xcd = [];
-    //     coordsObject.ycd = [];
-    //     coordsObject.frameTime = [];
-    //     coordsObject.xcd = rows[0]
-    //     coordsObject.ycd = rows[1]
-    //     coordsObject.frameTime = rows[2]
-    //     console.log("(수정)coordsObject.xcd: " + coordsObject.xcd);
-    //     console.log("(수정)coordsObject.ycd: " + coordsObject.ycd);
-    //     console.log("(수정)coordsObject.frameTime: " + coordsObject.frameTime);
+    //     coordsObj.xcd = [];
+    //     coordsObj.ycd = [];
+    //     coordsObj.frameTime = [];
+    //     coordsObj.xcd = rows[0]
+    //     coordsObj.ycd = rows[1]
+    //     coordsObj.frameTime = rows[2]
+    //     console.log("(수정)coordsObj.xcd: " + coordsObj.xcd);
+    //     console.log("(수정)coordsObj.ycd: " + coordsObj.ycd);
+    //     console.log("(수정)coordsObj.frameTime: " + coordsObj.frameTime);
     // });
     //--------------------------------------------
-    //  xylineFlag = false;
+    //  flagObj.xylineFlag = false;
     var handson = document.getElementById("hot-display-license-info");
     handson.parentNode.removeChild(handson);
 
@@ -487,8 +514,8 @@ function divRemove() {
     arrayinitialize();
     analysisButton.disabled = false;
     xylineButton.disabled = false;
-    xylineFlag = false;
-    create_dot_arr = [];//원점 초기화
+    flagObj.xylineFlag = false;
+    coordsObj.xylineDot = [];//원점 초기화
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 }
