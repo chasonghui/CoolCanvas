@@ -24,14 +24,25 @@
     position: absolute;
     height: auto;
   }
+  .controlbuttons{
+    height: 50px;
+    width: 50px;
+    border:none;
+    margin:0px;
+  }
+
+  #goback{
+    border-left: black solid 1px;
+  }
+  #gofoward{
+    border-right: black solid 1px;
+  }
   button{
     /* -webkit-appearance: none; */
     /* -moz-appearance: none; */
     font-weight: bold;
     border: 1px solid rgb(0, 0, 0); 
     background-color: rgba(0, 0, 0, 0); 
-    color: black; 
-    padding: 8px;
     margin: 5px;
     font-size: 30px;
 
@@ -39,10 +50,9 @@
   }
   button:hover{
     font-weight: bold;
-    border: 1px solid rgb(0, 0, 0); 
+    border: none; 
     background-color: rgba(23, 41, 199, 0.616); 
     color: white; 
-    padding: 8px;
     font-size: 30px;
   }
 
