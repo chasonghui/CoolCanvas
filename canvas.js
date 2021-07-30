@@ -204,7 +204,7 @@ function saveCoords() {
     flagObj.xylineFlag.disabled = false;
 
     drawTable();
-    arrayinitialize();
+    // arrayinitialize();
 
 }
 
@@ -487,32 +487,29 @@ function drawTable() {
     var hot = new Handsontable(_container, {
         data: _data,
         rowHeaders: ['x', 'y', 'time'],
-        contextMenu: true
+        contextMenu: true,
+        afterChange: (change) => {
+            tableChange(change);
+        }
     });
-    //표수정시 수정버튼 클릭 ---------------------
-    // var exportString = document.getElementById("export-string")
-    // exportString.addEventListener("click", function (event) {
-    //     var modify = hot.getPlugin("exportFile").exportAsString("csv");
-    //     const rows = modify.split('\r\n');
-    //     coordsObj.xcd = [];
-    //     coordsObj.ycd = [];
-    //     coordsObj.frameTime = [];
-    //     coordsObj.xcd = rows[0]
-    //     coordsObj.ycd = rows[1]
-    //     coordsObj.frameTime = rows[2]
-    //     console.log("(수정)coordsObj.xcd: " + coordsObj.xcd);
-    //     console.log("(수정)coordsObj.ycd: " + coordsObj.ycd);
-    //     console.log("(수정)coordsObj.frameTime: " + coordsObj.frameTime);
-    // });
-    //--------------------------------------------
-    //  flagObj.xylineFlag = false;
+    function tableChange(c) {
+        //c[0]=행,0->x값, 1->y값, 3->시간
+        //c[1]=열, 좌표의 순서 
+        //c[2]=원본값 : 값 그자체
+        //c[3]=수정된 값 : 값 그자체
+        console.log("coordsObj.xcd: " + coordsObj.xcd);
+        console.log("coordsObj.ycd: " + coordsObj.ycd);
+        console.log("coordsObj.frameTime: " + coordsObj.frameTime);
+
+    }
     var handson = document.getElementById("hot-display-license-info");
     handson.parentNode.removeChild(handson);
-    clearCanvas();
+
 }
 
 //테이블 remove 버튼 : id가 table인 div 삭제 
 function divRemove() {
+    flagObj.tableFlag = false;
     var _child = document.getElementById("table");
     var xylineButton = document.getElementById("xyline");
     var analysisButton = document.getElementById("analysis");
@@ -523,7 +520,6 @@ function divRemove() {
     flagObj.xylineFlag = false;
     coordsObj.xylineDot = [];//원점 초기화
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
 }
 
 
