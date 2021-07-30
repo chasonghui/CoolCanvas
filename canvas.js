@@ -339,6 +339,9 @@ function retry() {
     var video = document.getElementById("vd1");
     var fixcurrentTime = video.currentTime
     var frameindex = coordsObj.frameTime.indexOf((fixcurrentTime - 0.04).toFixed(3));
+    if (frameindex === -1) {
+        console.log("삭제하려는 프레임" + (fixcurrentTime - 0.04).toFixed(3) + "에 찍힌 좌표가 존재하지 않음");
+    }
     console.log("frametime : " + coordsObj.frameTime);
     console.log("fixcurrentTime.toFixed(3)-0.04: " + (fixcurrentTime - 0.04).toFixed(3));
     console.log("frameindex: " + frameindex);
@@ -348,6 +351,10 @@ function retry() {
     coordsObj.ycd.splice(frameindex, 1);
     coordsObj.realx.splice(frameindex, 1);
     coordsObj.realy.splice(frameindex, 1);
+    console.log("coordsObj.xcd: " + coordsObj.xcd);
+    console.log("coordsObj.ycd: " + coordsObj.ycd);
+    console.log("coordsObj.frameTime: " + coordsObj.frameTime);
+
 }
 //-------------------------------------------------------------------------------------------
 
@@ -400,7 +407,7 @@ function clearCanvas() {
     xylineButton.disabled = true;//좌표계버튼 비활성화
     saveButton.disabled = true;
     input.disabled = true;
-    //arrayinitialize();
+    arrayinitialize();
 
 }
 
@@ -463,7 +470,6 @@ function gofowardFrame() {
 
 //테이블 생성: handsontable 생성(동적)
 function drawTable() {
-    clearCanvas();
     flagObj.tableFlag = true;
     var _tb1 = document.createElement("div");
     var _element = document.getElementById("handson");
@@ -502,7 +508,7 @@ function drawTable() {
     //  flagObj.xylineFlag = false;
     var handson = document.getElementById("hot-display-license-info");
     handson.parentNode.removeChild(handson);
-
+    clearCanvas();
 }
 
 //테이블 remove 버튼 : id가 table인 div 삭제 
